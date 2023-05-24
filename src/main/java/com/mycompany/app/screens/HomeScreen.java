@@ -49,9 +49,15 @@ public class HomeScreen implements IScreen {
     * ------------------------  Helper methods ------------------------
     */
 
+    /* clears the console / terminal screen */
     private void clearScreen() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+
+        // part \033[H moves cursor to top left corner
+        // part \033[2J clears screen from cursor to end of screen
+        out.print("\033[H\033[2J");
+
+        // resets the cursor position to the top of the screen
+        out.flush();
     }
 
 
