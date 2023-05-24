@@ -1,7 +1,12 @@
 package com.mycompany.app;
 
+import java.util.Scanner;
+
+import static java.lang.System.out;
+
 public class App {
   public static void main(String args[]) {
-    System.out.println("Welcome to eCommerce App!");
+    Scanner scanner = new Scanner(System.in);
+
   }
 }
