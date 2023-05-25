@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS departments CASCADE;
 
 CREATE TABLE users (
     id VARCHAR PRIMARY KEY,
-    name VARCHAR NOT NULL UNIQUE,
+    username VARCHAR NOT NULL UNIQUE,
     password VARCHAR NOT NULL,
     roles_id VARCHAR NOT NULL,
     FOREIGN KEY (roles_id) REFERENCES roles (id)
