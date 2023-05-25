@@ -2,7 +2,9 @@ package com.revature.app.services;
 
 import com.revature.app.daos.RoleDAO;
 import com.revature.app.daos.UserDAO;
+import com.revature.app.screens.BrowseScreen;
 import com.revature.app.screens.HomeScreen;
+import com.revature.app.screens.LoginScreen;
 import com.revature.app.screens.RegisterScreen;
 
 import java.util.Scanner;
@@ -21,6 +23,9 @@ public class RouterService {
             case "/login":
                 break;
             case "/browse":
+                new BrowseScreen(this).start(scanner);
+                break;
+            case "/cart":
                 break;
             case "/checkout":
                 break;
