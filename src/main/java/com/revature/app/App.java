@@ -1,11 +1,7 @@
 package com.revature.app;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Scanner;
-
 import com.revature.app.services.RouterService;
-import com.revature.app.utils.ConnectionFactory;
 
 public class App {
   public static void main(String args[]) {
