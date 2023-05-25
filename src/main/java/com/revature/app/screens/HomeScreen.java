@@ -1,10 +1,14 @@
 package com.revature.app.screens;
 
-import com.revature.app.screens.IScreen;
+import com.revature.app.services.RouterService;
+import lombok.AllArgsConstructor;
+
 import java.util.Scanner;
 import static java.lang.System.out;
 
+@AllArgsConstructor
 public class HomeScreen implements IScreen {
+    private final RouterService routerService;
 
     @Override
     public void start(Scanner scanner) {
@@ -13,9 +17,8 @@ public class HomeScreen implements IScreen {
         exit: {
             while (true) {
 
-                out.println("Welcome to e-shop!");
-                out.println("\n[1] Login");
-                out.println("[2] Register");
+                out.println("\n[1] Register");
+                out.println("[2] Login");
                 out.println("[3] Browse");
                 out.println("[x] Exit");
 
@@ -24,6 +27,7 @@ public class HomeScreen implements IScreen {
 
                 switch (input.toLowerCase()) {
                     case "1":
+                        routerService.navigate("/register", scanner);
                         break;
                     case "2":
                         break;
