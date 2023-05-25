@@ -8,9 +8,11 @@ import lombok.*;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class Roles {
+public class User {
 
     private String id;
     private String name;
+    private String password;
+    private String roleId;
 
 }

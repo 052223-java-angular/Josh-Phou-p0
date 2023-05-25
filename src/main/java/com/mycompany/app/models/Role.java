@@ -8,12 +8,9 @@ import lombok.*;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class Orders {
+public class Role {
 
     private String id;
-    private String status;
-    private String quantity;
-    private String userId;
-    private String productId;
+    private String name;
 
 }
