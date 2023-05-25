@@ -8,12 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class Products {
-
+public class Department {
     private String id;
     private String name;
-    private String price;
-    private String onHand;
-    private String departmentId;
-
 }

@@ -8,11 +8,12 @@ import lombok.*;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class Reviews {
+public class Product {
 
     private String id;
-    private String comment;
-    private int rating;
-    private String userId;
-    private String productId;
+    private String name;
+    private String price;
+    private String onHand;
+    private String departmentId;
+
 }
