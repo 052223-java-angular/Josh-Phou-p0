@@ -1,9 +1,7 @@
 package com.revature.app.screens;
 
 import com.revature.app.screens.IScreen;
-
 import java.util.Scanner;
-
 import static java.lang.System.out;
 
 public class HomeScreen implements IScreen {
