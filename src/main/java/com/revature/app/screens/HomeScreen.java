@@ -30,6 +30,7 @@ public class HomeScreen implements IScreen {
                         routerService.navigate("/register", scanner);
                         break;
                     case "2":
+                        routerService.navigate("/login", scanner);
                         break;
                     case "3":
                         break;

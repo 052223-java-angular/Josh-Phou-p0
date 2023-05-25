@@ -3,6 +3,7 @@ package com.revature.app.services;
 import com.revature.app.daos.RoleDAO;
 import com.revature.app.daos.UserDAO;
 import com.revature.app.screens.HomeScreen;
+import com.revature.app.screens.LoginScreen;
 import com.revature.app.screens.RegisterScreen;
 
 import java.util.Scanner;
@@ -19,6 +20,7 @@ public class RouterService {
                 new RegisterScreen(getUserService()).start(scanner);
                 break;
             case "/login":
+                new LoginScreen(getUserService()).start(scanner);
                 break;
             case "/browse":
                 break;
