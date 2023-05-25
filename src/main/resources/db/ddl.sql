@@ -21,11 +21,11 @@ CREATE TABLE roles (
 CREATE TABLE orders (
     id VARCHAR PRIMARY KEY,
     status VARCHAR NOT NULL,
-    quantity VARCHAR NOT NULL
+    quantity VARCHAR NOT NULL,
     user_id VARCHAR NOT NULL,
     product_id VARCHAR,
     FOREIGN KEY (user_id) REFERENCES users (id),
-    FOREIGN KEY (product_id) REFERENCES product (id)
+    FOREIGN KEY (product_id) REFERENCES products (id)
 );
 
 CREATE TABLE products (
@@ -43,8 +43,8 @@ CREATE TABLE reviews (
     rating int,
     user_id VARCHAR NOT NULL,
     product_id VARCHAR NOT NULL,
-    FOREIGN KEY (users_id) REFERENCES users (id),
-    FOREIGN KEY (products_id) REFERENCES products (id)
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (product_id) REFERENCES products (id)
 );
 
 CREATE TABLE departments (
