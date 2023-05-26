@@ -1,12 +1,12 @@
 package com.revature.app.screens;
 
 import com.revature.app.services.RouterService;
-import lombok.*;
+import lombok.AllArgsConstructor;
 
 import java.util.Scanner;
 
 @AllArgsConstructor
-public class ProductScreen implements IScreen {
+public class p3Screen implements IScreen{
     private final RouterService router;
 
     @Override
@@ -16,11 +16,11 @@ public class ProductScreen implements IScreen {
 
         while (true) {
             clearScreen();
-            System.out.println("Welcome to the product catalog\n");
-            System.out.println("[1] Product category 1");
-            System.out.println("[2] Product category 2");
-            System.out.println("[3] Product category 3");
-            System.out.println("[4] Product category 4");
+            System.out.println("Product1 Catalog\n");
+            System.out.println("[1] Product 1");
+            System.out.println("[2] Product 2");
+            System.out.println("[3] Product 3");
+            System.out.println("[4] Product 4");
             System.out.println("[x] Return to menu");
 
             System.out.print("\nEnter: ");
@@ -28,19 +28,19 @@ public class ProductScreen implements IScreen {
 
             switch (input.toLowerCase()) {
                 case "1":
-                    router.navigate("/product1", scanner);
+                    // TODO choose product 1
                     break;
                 case"2":
-                    router.navigate("/product2", scanner);
+                    // TODO choose product 1
                     break;
                 case "3":
-                    router.navigate("/product3", scanner);
+                    // TODO choose product 1
                     break;
                 case "4":
-                    router.navigate("/product4", scanner);
+                    // TODO choose product 1
                     break;
                 case "x":
-                    router.navigate("/browse", scanner);
+                    // TODO return to BrowseScreen
                     break;
                 default:
                     clearScreen();

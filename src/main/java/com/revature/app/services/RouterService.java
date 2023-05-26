@@ -4,10 +4,8 @@ import com.revature.app.daos.RoleDAO;
 import com.revature.app.daos.UserDAO;
 
 import com.revature.app.models.Session;
-import com.revature.app.screens.BrowseScreen;
-import com.revature.app.screens.HomeScreen;
-import com.revature.app.screens.LoginScreen;
-import com.revature.app.screens.RegisterScreen;
+import com.revature.app.screens.*;
+
 import lombok.AllArgsConstructor;
 
 import java.util.Scanner;
@@ -33,6 +31,10 @@ public class RouterService {
             case "/browse":
                 // todo inject the session object
                 new BrowseScreen(this).start(scanner);
+                break;
+            case "/products":
+                // todo inject the session object
+                new ProductScreen(this).start(scanner);
                 break;
             case "/cart":
                 break;
