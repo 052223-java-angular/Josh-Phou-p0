@@ -1,9 +1,11 @@
 package com.revature.app.screens;
 
 import com.revature.app.models.User;
+import com.revature.app.services.RouterService;
 import com.revature.app.services.UserService;
 import lombok.AllArgsConstructor;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import static java.lang.System.out;
@@ -11,6 +13,7 @@ import static java.lang.System.out;
 @AllArgsConstructor
 public class RegisterScreen implements IScreen {
     private final UserService userService;
+    private final RouterService routerService;
 
     @Override
     public void start(Scanner scanner) {
@@ -44,29 +47,38 @@ public class RegisterScreen implements IScreen {
                 out.print("\nEnter (y/n): ");
 
                 switch (scanner.nextLine()) {
-                    case "y":
-                        User createdUser = userService.register(username, password);
-//                        session.setSession(createdUser);
-//                        router.navigate("/menu", scanner);
-                        break exit;
-                    case "n":
+                    case "y" -> {
+                        // register the user through the user service
+                        clearScreen();
+                        userService.register(username, password);
+                        out.println("You have successfully registered as: "+username);
+                        out.println("Press any key to return the main menu and login...");
+                        scanner.nextLine();
+                        clearScreen();
+                        routerService.navigate("/home", scanner);
+                    }
+                    case "n" -> {
                         clearScreen();
                         out.println("Restarting process...");
                         out.print("\nPress enter to continue...");
                         scanner.nextLine();
-                        break;
-                    default:
+                    }
+                    default -> {
                         clearScreen();
                         out.println("Invalid option!");
                         out.print("\nPress enter to continue...");
                         scanner.nextLine();
-                        break;
+                    }
                 }
 
             }
         }
 
     }
+
+    /*
+    * --------------------  HELPER METHODS ------------------------------
+    * */
 
     public String getUsername(Scanner scanner) {
         String username = "";
@@ -101,13 +113,13 @@ public class RegisterScreen implements IScreen {
         return username;
     }
 
-    public String getPassword(Scanner scan) {
+    public String getPassword(Scanner scanner) {
         String password = "";
         String confirmPassword = "";
 
         while (true) {
             out.print("\nEnter a password (x to cancel): ");
-            password = scan.nextLine();
+            password = scanner.nextLine();
 
             if (password.equalsIgnoreCase("x")) {
                 return "x";
@@ -117,12 +129,12 @@ public class RegisterScreen implements IScreen {
                 clearScreen();
                 out.println("Password needs to be minimum 8 characters, at least 1 letter and 1 number");
                 out.print("\nPress enter to continue...");
-                scan.nextLine();
+                scanner.nextLine();
                 continue;
             }
 
             out.print("\nPlease confirm password (x to cancel): ");
-            confirmPassword = scan.nextLine();
+            confirmPassword = scanner.nextLine();
 
             if (confirmPassword.equalsIgnoreCase("x")) {
                 return "x";
@@ -132,7 +144,7 @@ public class RegisterScreen implements IScreen {
                 clearScreen();
                 out.println("Passwords do not match");
                 out.print("\nPress enter to continue...");
-                scan.nextLine();
+                scanner.nextLine();
                 continue;
             }
 
@@ -142,10 +154,25 @@ public class RegisterScreen implements IScreen {
         return password;
     }
 
-
     private void clearScreen() {
         out.print("\033[H\033[2J");
         out.flush();
+    }
+
+    private void clearConsole() {
+        try {
+            final String os = System.getProperty("os.name");
+            if (os.contains("Windows")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+//                Runtime.getRuntime().exec(new String[]{"cmd", "cls"});
+            } else {
+                Runtime.getRuntime().exec(new String[]{"clear"});
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
 }

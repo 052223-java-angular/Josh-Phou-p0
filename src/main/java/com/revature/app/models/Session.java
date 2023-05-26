@@ -10,9 +10,14 @@ import lombok.*;
 @EqualsAndHashCode
 public class Session {
 
-    private String userId;
+    private String id;
     private String username;
-    private String role;
+    private String roleId;
 
+    public void setSession(User user) {
+        this.id = user.getId();
+        this.username = user.getUsername();
+        this.roleId = user.getRoleId();
+    }
 
 }

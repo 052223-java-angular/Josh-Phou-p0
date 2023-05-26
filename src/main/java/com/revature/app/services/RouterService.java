@@ -2,13 +2,17 @@ package com.revature.app.services;
 
 import com.revature.app.daos.RoleDAO;
 import com.revature.app.daos.UserDAO;
+import com.revature.app.models.Session;
 import com.revature.app.screens.HomeScreen;
 import com.revature.app.screens.LoginScreen;
 import com.revature.app.screens.RegisterScreen;
+import lombok.AllArgsConstructor;
 
 import java.util.Scanner;
 
+@AllArgsConstructor
 public class RouterService {
+    private Session session;
 
     public void navigate (String path, Scanner scanner)
     {
@@ -17,10 +21,12 @@ public class RouterService {
                 new HomeScreen(this).start(scanner);
                 break;
             case "/register":
-                new RegisterScreen(getUserService()).start(scanner);
+                // Within the register screen, the user should return the main menu after completing the registration process
+                new RegisterScreen(getUserService(), this).start(scanner);
                 break;
             case "/login":
-                new LoginScreen(getUserService()).start(scanner);
+                // after a successful login, the user should navigate the browse screen
+                new LoginScreen(getUserService(), this, session).start(scanner);
                 break;
             case "/browse":
                 break;

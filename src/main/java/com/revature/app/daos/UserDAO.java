@@ -14,9 +14,28 @@ import java.util.Optional;
 public class UserDAO implements ICrudDAO<User> {
 
     @Override
-    public void save(User user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'save'");
+    public void save(User obj) {
+        try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
+            String sql = "INSERT INTO users (id, username, password, roles_id) VALUES (?, ?, ?, ?)";
+
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                // Set values for prepared statement parameters
+                ps.setString(1, obj.getId());
+                ps.setString(2, obj.getUsername());
+                ps.setString(3, obj.getPassword());
+                ps.setString(4, obj.getRoleId());
+
+                // Execute the SQL statement
+                ps.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to connect to the database", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot find application.properties", e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Unable to load JDBC driver", e);
+        }
     }
 
     @Override
@@ -65,7 +84,7 @@ public class UserDAO implements ICrudDAO<User> {
                         user.setId(rs.getString("id"));
                         user.setUsername(rs.getString("username"));
                         user.setPassword(rs.getString("password"));
-                        user.setRoleId(rs.getString("role_id"));
+                        user.setRoleId(rs.getString("roles_id"));
                         return Optional.of(user);
                     }
                 }
