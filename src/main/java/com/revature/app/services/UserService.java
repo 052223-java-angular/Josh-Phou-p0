@@ -3,6 +3,8 @@ package com.revature.app.services;
 import com.revature.app.daos.UserDAO;
 import com.revature.app.models.Role;
 import com.revature.app.models.User;
+import com.revature.app.utils.custom_exceptions.InvalidCredentialException;
+import com.revature.app.utils.custom_exceptions.UserNotFoundException;
 import lombok.AllArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -15,19 +17,31 @@ public class UserService {
     private final RoleService roleService;
 
     public User register(String username, String password) {
-        // retrieve the role for the user being registered
+        // retrieve the role to assign the user being registered
         Role foundRole = roleService.findByName("USER");
 
         // encrypt the password
         String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
 
-        // instantiate a User object
+        // instantiate a User object with the hashed password, and a valid role id
         User newUser = new User(username, hashed, foundRole.getId());
 
-        // save the user
+        // save / persist the user
         userDAO.save(newUser);
 
+        // return the new user
         return newUser;
+    }
+
+    public User login(String username, String password) throws UserNotFoundException, InvalidCredentialException {
+         User user = userDAO.findByUsername(username)
+                 .orElseThrow(UserNotFoundException::new);
+
+        if (!BCrypt.checkpw(password, user.getPassword())) {
+            throw new InvalidCredentialException();
+        };
+
+        return user;
     }
 
     public boolean isValidUsername(String username) {
