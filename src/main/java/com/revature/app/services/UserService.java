@@ -5,10 +5,13 @@ import com.revature.app.models.Role;
 import com.revature.app.models.User;
 import com.revature.app.utils.custom_exceptions.InvalidCredentialException;
 import com.revature.app.utils.custom_exceptions.UserNotFoundException;
+
 import lombok.AllArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Optional;
+
+import static java.lang.System.out;
 
 @AllArgsConstructor
 public class UserService {
@@ -33,15 +36,21 @@ public class UserService {
         return newUser;
     }
 
-    public User login(String username, String password) throws UserNotFoundException, InvalidCredentialException {
-         User user = userDAO.findByUsername(username)
-                 .orElseThrow(UserNotFoundException::new);
+    public User login(String username, String password) {
+        // find the user
+         Optional<User> userOpt = userDAO.findByUsername(username);
 
-        if (!BCrypt.checkpw(password, user.getPassword())) {
-            throw new InvalidCredentialException();
+         // when user is not found, return null
+         if (userOpt.isEmpty()) {
+             return null;
+         }
+
+         // when user is found, validate the password and return null if password is invalid
+        if (!BCrypt.checkpw(password, userOpt.get().getPassword())) {
+            return null;
         };
 
-        return user;
+        return userOpt.get();
     }
 
     public boolean isValidUsername(String username) {

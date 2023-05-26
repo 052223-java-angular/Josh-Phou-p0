@@ -13,7 +13,8 @@ public class BrowseScreen implements IScreen {
     @Override
     public void start(Scanner scanner) {
         String input = "";
-        scanner.nextLine();
+        // todo -- if this is not required, do remove so that screen flow is not interrupted
+//        scanner.nextLine();
 
         exit: {
             while (true) {
@@ -33,7 +34,7 @@ public class BrowseScreen implements IScreen {
                         router.navigate("/Product", scanner);
                         break;
                     case"2":
-                        // TODO: navigate to cart   
+                        // TODO: navigate to cart
                         break;
                     case "3":
                         // TODO navigate to past orders
