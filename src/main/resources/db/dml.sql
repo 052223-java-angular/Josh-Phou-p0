@@ -1,3 +1,13 @@
+
+-- *****  insert and uncomment the below SET statements before running the SQL script so
+-- so that the data will be inserted into the correct db & schema
+
+-- sets the database to use
+-- SET search_path TO postgres;
+
+-- sets the schema to insert data into
+-- SET SCHEMA 'your schema name';
+
 INSERT INTO ROLES (id, name) VALUES ('be06d9a6-b066-40a0-9f15-1d4a42b7abf4', 'USER');
 INSERT INTO ROLES (id, name) VALUES ('224d8726-78cf-44a1-8ee0-054cdb79ecf5', 'ADMIN');
 

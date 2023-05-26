@@ -23,7 +23,7 @@ public class RegisterScreen implements IScreen {
         exit: {
             while (true) {
                 clearScreen();
-                out.println("Welcome to the register screen!");
+                out.println("Registering...");
 
                 // get username
                 username = getUsername(scanner);
@@ -50,9 +50,9 @@ public class RegisterScreen implements IScreen {
                     case "y" -> {
                         // register the user through the user service
                         clearScreen();
-                        userService.register(username, password);
-                        out.println("You have successfully registered as: "+username);
-                        out.println("Press any key to return the main menu and login...");
+                        User user = userService.register(username, password);
+                        out.println("You have successfully registered as: " + user.getUsername());
+                        out.println("Press any key to return the main menu and login...\n");
                         scanner.nextLine();
                         clearScreen();
                         routerService.navigate("/home", scanner);
