@@ -19,7 +19,6 @@ public class HomeScreen implements IScreen {
 
                 out.println("\n[1] Register");
                 out.println("[2] Login");
-                out.println("[3] Browse");
                 out.println("[x] Exit");
 
                 out.print("\nEnter: ");
@@ -31,8 +30,6 @@ public class HomeScreen implements IScreen {
                         break;
                     case "2":
                         routerService.navigate("/login", scanner);
-                        break;
-                    case "3":
                         break;
                     case "x":
                         break;
