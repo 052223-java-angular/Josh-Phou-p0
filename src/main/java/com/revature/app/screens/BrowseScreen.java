@@ -19,11 +19,11 @@ public class BrowseScreen implements IScreen {
         exit: {
             while (true) {
                 clearScreen();
-                System.out.println("Welcome to the product catalog\n");
+                System.out.println("Welcome to the -Company name- eStore\n");
                 System.out.println("[1] Select a product category");
                 System.out.println("[2] View cart");
                 System.out.println("[3] View past orders");
-                System.out.println("[4] Leave a review");
+                System.out.println("[4] Leave a product review");
                 System.out.println("[x] Exit");
 
                 System.out.print("\nEnter: ");
@@ -31,16 +31,16 @@ public class BrowseScreen implements IScreen {
 
                 switch (input.toLowerCase()){
                     case "1":
-                        router.navigate("/Product", scanner);
+                        router.navigate("/product", scanner);
                         break;
                     case"2":
-                        // TODO: navigate to cart
+                        router.navigate("/cart", scanner);
                         break;
                     case "3":
-                        // TODO navigate to past orders
+                        router.navigate("/orders", scanner);
                         break;
                     case "4":
-                        // TODO navigate to review
+                        router.navigate("/review", scanner);
                         break;
                     case "x":
                         break exit;
