@@ -28,6 +28,8 @@ public class OrderDAO implements ICrudDAO<Order> {
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 
+    /* Updates the product order quantity matching the order_id and product_id
+    * */
     public int updateQuantity(String quantity, String orderId, String productId) {
 
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
@@ -50,6 +52,8 @@ public class OrderDAO implements ICrudDAO<Order> {
         }
     }
 
+    /* Deletes an Order record by the tables id
+    * */
     @Override
     public void delete(String id) {
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
@@ -234,6 +238,7 @@ public class OrderDAO implements ICrudDAO<Order> {
      * ------------------------  Helper methods ------------------------
      */
 
+    /* Sets the fields of the Product and Order instance using the data from the ResultSet*/
     private Order buildOrderInstance(ResultSet rs) throws SQLException {
         Product product = new Product(
                 rs.getString("product_id"),

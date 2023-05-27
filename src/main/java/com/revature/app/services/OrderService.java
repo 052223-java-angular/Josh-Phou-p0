@@ -31,6 +31,8 @@ public class OrderService {
         return orderItems.get();
     }
 
+    /* Updates the product order quantity or removes the product when quantity is less than or equal to zero
+    * */
     public void updateProductOrderQuantity(boolean increase, String orderId, String productId) {
 
         // verify the order and product exists
@@ -55,6 +57,8 @@ public class OrderService {
 
     }
 
+    /* Removes a product from the order
+    * */
     public void removeProductFromOrder(String orderId, String productId) {
 
         // verify the order and product exists
@@ -71,10 +75,12 @@ public class OrderService {
 
     }
 
+    /* Delete the orders records matching the order_id */
     public void deleteOrder(String orderId) {
         orderDAO.deleteByOrderId(orderId);
     }
 
+    /* Convert a String to Integer */
     private int toInt(String value) throws NumberFormatException {
         return Integer.parseInt(value);
     }

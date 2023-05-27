@@ -67,8 +67,12 @@ public class CheckoutScreen implements IScreen {
                                     deleteOrder(scanner, orderItems);
                                     break;
                                 case "4":
+                                    // todo checkout
+                                    // collect payment info, address, name
+                                    // checkout and persist order by changing order status
                                     break;
                                 case "5":
+                                    routerService.navigate("/storefront", scanner);
                                     break;
                                 default:
                             }
@@ -90,7 +94,6 @@ public class CheckoutScreen implements IScreen {
 
                 }
 
-
                 break exit;
             }
         }
@@ -102,6 +105,8 @@ public class CheckoutScreen implements IScreen {
      * ------------------------  Menu Option Helper methods ------------------------
      */
 
+    /* Updates the order quantity of a product
+    * */
     private void updateQuantity(Scanner scanner, List<Order> orderItems) {
 
         out.println("\nWhich item would you like to update?");
@@ -143,6 +148,8 @@ public class CheckoutScreen implements IScreen {
 
     }
 
+    /* Removes a product from the order
+    * */
     private void removeProductFromOrder(Scanner scanner, List<Order> orderItems) {
 
         out.println("\nWhich item would you like to remove?");
@@ -167,6 +174,8 @@ public class CheckoutScreen implements IScreen {
 
     }
 
+    /* Deletes the entire order
+    * */
     private void deleteOrder(Scanner scanner, List<Order> orderItems) {
         out.println("\nDelete your order?");
         out.println("Press any key to confirm (x to cancel)");
@@ -205,14 +214,18 @@ public class CheckoutScreen implements IScreen {
 
     }
 
+    /* Sums up and displays the order total
+    *  */
     private void displayOrderTotal(List<Order> orderItems) {
-        Double total = 0.00;
+        double total = 0.00;
         for (Order item : orderItems) {
             total += toDouble(item.getProduct().getPrice()) * toDouble(item.getQuantity());
         }
         out.format("Order Total: $%s%n", total);
     }
 
+    /* Converts String value to double
+    * */
     private Double toDouble(String value) {
         try {
             return Double.parseDouble(value);
@@ -222,6 +235,8 @@ public class CheckoutScreen implements IScreen {
         return 0.00;
     }
 
+    /* Converts String value to int
+    * */
     private int toInt(String value) throws NumberFormatException {
         return Integer.parseInt(value);
     }
