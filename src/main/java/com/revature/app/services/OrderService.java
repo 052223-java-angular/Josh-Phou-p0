@@ -71,6 +71,10 @@ public class OrderService {
 
     }
 
+    public void deleteOrder(String orderId) {
+        orderDAO.deleteByOrderId(orderId);
+    }
+
     private int toInt(String value) throws NumberFormatException {
         return Integer.parseInt(value);
     }

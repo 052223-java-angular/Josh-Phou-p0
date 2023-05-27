@@ -37,39 +37,48 @@ public class CheckoutScreen implements IScreen {
 
                 switch (userSelection) {
                     case "1":
-                        out.println("The items in the order ...");
                         List<Order> orderItems = orderService.findOrderByUserId(session.getId(), OrderService.ORDER_STATUS.PENDING);
-                        displayOrderItems(orderItems);
-                        displayOrderTotal(orderItems);
 
-                        // prompt for action, checkout, modify or clear order
-                        out.println("\nWhat would you like to do next?");
-                        out.println("[1] Update quantity");
-                        out.println("[2] Remove product");
-                        out.println("[3] Delete order");
-                        out.println("[4] Checkout");
-                        out.println("[5} Return to store front");
+                        if (orderItems.size() > 0) {
+                            out.println("The items in the order ...");
+                            displayOrderItems(orderItems);
+                            displayOrderTotal(orderItems);
 
-                        userSelection = scanner.nextLine();
-                        switch (userSelection) {
-                            case "1":
-                                clearScreen();
-                                updateQuantity(scanner, orderItems);
-                                break;
-                            case "2":
-                                clearScreen();
-                                removeProductFromOrder(scanner, orderItems);
-                                break;
-                            case "3":
-                                clearScreen();
-                                deleteOrder(scanner, orderItems);
-                                break;
-                            case "4":
-                                break;
-                            case "5":
-                                break;
-                            default:
+                            // prompt for action, checkout, modify or clear order
+                            out.println("\nWhat would you like to do next?");
+                            out.println("[1] Update quantity");
+                            out.println("[2] Remove product");
+                            out.println("[3] Delete order");
+                            out.println("[4] Checkout");
+                            out.println("[5} Return to store front");
 
+                            userSelection = scanner.nextLine();
+                            switch (userSelection) {
+                                case "1":
+                                    clearScreen();
+                                    updateQuantity(scanner, orderItems);
+                                    break;
+                                case "2":
+                                    clearScreen();
+                                    removeProductFromOrder(scanner, orderItems);
+                                    break;
+                                case "3":
+                                    clearScreen();
+                                    deleteOrder(scanner, orderItems);
+                                    break;
+                                case "4":
+                                    break;
+                                case "5":
+                                    break;
+                                default:
+                            }
+
+                        } else {
+                            clearScreen();
+                            out.println("\nYou have no orders, press any key to return the store front");
+                            scanner.nextLine();
+                            routerService.navigate("/storefront", scanner);
+                            break;
                         }
 
                         continue;
@@ -154,6 +163,19 @@ public class CheckoutScreen implements IScreen {
             orderService.removeProductFromOrder(
                     orderItems.get(toInt(itemToRemove)-1).getOrderId(),
                     orderItems.get(toInt(itemToRemove)-1).getProductId());
+        }
+
+    }
+
+    private void deleteOrder(Scanner scanner, List<Order> orderItems) {
+        out.println("\nDelete your order?");
+        out.println("Press any key to confirm (x to cancel)");
+        String opt = scanner.nextLine();
+
+        // when selected option is not "x" and less than products in orderItems
+        if (!opt.equalsIgnoreCase("x")) {
+            // remove the product from the order
+            orderService.deleteOrder(orderItems.get(0).getOrderId());
         }
 
     }

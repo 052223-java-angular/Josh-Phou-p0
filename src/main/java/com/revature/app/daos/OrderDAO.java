@@ -71,6 +71,27 @@ public class OrderDAO implements ICrudDAO<Order> {
 
     }
 
+    /* Deletes all the records of an order by the order_id
+    * */
+    public void deleteByOrderId(String orderId) {
+        try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
+            String sql = "DELETE FROM ORDERS WHERE order_id = ?";
+
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, orderId);
+                ps.executeUpdate();
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to connect to the database", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot find application.properties", e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Unable to load JDBC driver", e);
+        }
+
+    }
+
     /* Delete a product from the orders table that matches the order_id and product_id
     * */
     public void deleteProductFromOrder(String orderId, String productId) {
