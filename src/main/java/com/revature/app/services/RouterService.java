@@ -10,8 +10,6 @@ import lombok.AllArgsConstructor;
 
 import java.util.Scanner;
 
-import static java.lang.System.out;
-
 @AllArgsConstructor
 public class RouterService {
     private Session session;
@@ -30,11 +28,8 @@ public class RouterService {
                 // after a successful login, the user should navigate to the browse screen
                 new LoginScreen(getUserService(), this, session).start(scanner);
                 break;
-            case "/browse":
-                // todo remove, just verifying user is being passed to the session object
-                out.format("Checking the user is being set to the session instance: %s \n\n", session.toString());
-
-                new BrowseScreen(this).start(scanner);
+            case "/storefront":
+                new StoreFront(this, session).start(scanner);
                 break;
             case "/products":
                 // todo inject the session object
@@ -43,6 +38,7 @@ public class RouterService {
             case "/cart":
                 break;
             case "/checkout":
+                new CheckoutScreen(this, session).start(scanner);
                 break;
             case "/review":
                 break;
