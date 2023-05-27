@@ -1,16 +1,21 @@
 package com.revature.app.screens;
 
+import com.revature.app.models.Order;
 import com.revature.app.models.Session;
+import com.revature.app.services.OrderService;
 import com.revature.app.services.RouterService;
 import lombok.AllArgsConstructor;
 
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.System.out;
 
 @AllArgsConstructor
 public class CheckoutScreen implements IScreen {
 
+    private final OrderService orderService;
     private final RouterService routerService;
     private Session session;
 
@@ -23,7 +28,7 @@ public class CheckoutScreen implements IScreen {
             while (true) {
 
                 clearScreen();
-                out.println("Welcome to the checkout screen! \n" + session.toString());
+                out.println("Welcome to the checkout screen! \n" + session.getUsername());
                 out.println("\nWhat would you like to do?");
                 out.println("[1] View order");
                 out.println("[x] Return to store front\n");
@@ -32,9 +37,25 @@ public class CheckoutScreen implements IScreen {
 
                 switch (userSelection) {
                     case "1":
-                        // todo implement service methods for getting orders from db
                         out.println("The contents of the order ...");
-                        break;
+                        List<Order> orderItems = orderService.findAllOrdersByUserId(session.getId());
+//                        out.println(orderItems.toString());
+
+                        out.format("Order#: %s\n", orderItems.get(0).getOrderId());
+                        AtomicInteger itemNum = new AtomicInteger(1);
+                        orderItems.forEach(item -> {
+                            out.format("Item [%s] %nProduct#: %s %nName: %s %nPrice: %s %nOn Hand: %s%n%n",
+                                    itemNum.getAndIncrement(),
+                                    item.getProduct().getId(),
+                                    item.getProduct().getName(),
+                                    item.getProduct().getPrice(),
+                                    item.getProduct().getOnHand());
+                        });
+
+
+                        scanner.nextLine();
+
+                        continue;
                     case "2":
                         // todo - possibly add option to delete order
                         break;

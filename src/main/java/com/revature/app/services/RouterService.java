@@ -1,5 +1,6 @@
 package com.revature.app.services;
 
+import com.revature.app.daos.OrderDAO;
 import com.revature.app.daos.RoleDAO;
 import com.revature.app.daos.UserDAO;
 
@@ -38,7 +39,7 @@ public class RouterService {
             case "/cart":
                 break;
             case "/checkout":
-                new CheckoutScreen(this, session).start(scanner);
+                new CheckoutScreen(getOrderService(), this, session).start(scanner);
                 break;
             case "/review":
                 break;
@@ -57,4 +58,7 @@ public class RouterService {
         return new RoleService(new RoleDAO());
     }
 
+    private OrderService getOrderService() {
+        return new OrderService(new OrderDAO());
+    }
 }
