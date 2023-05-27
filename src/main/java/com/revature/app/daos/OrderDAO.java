@@ -46,17 +46,19 @@ public class OrderDAO implements ICrudDAO<Order> {
     }
 
 
-    public Optional<List<Order>> findAllByUserId(String userId) {
+    public Optional<List<Order>> findPendingOrderByUserId(String userId) {
 
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
             String sql = "SELECT a.*, b.id as product_id, b.name as product_name, b.price, b.on_hand, b.departments_id " +
                     "FROM ORDERS AS a " +
                     "INNER JOIN PRODUCTS AS b " +
                     "ON a.product_id = b.id " +
-                    "WHERE user_id = ?";
+                    "WHERE user_id = ? " +
+                    "AND status = ?";
 
             try (PreparedStatement ps = connection.prepareStatement(sql)) {
                 ps.setString(1, userId);
+                ps.setString(2, "0");
 
                 try (ResultSet rs = ps.executeQuery()) {
                     List<Order> orderItemList = new ArrayList<>();

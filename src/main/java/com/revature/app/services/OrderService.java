@@ -14,7 +14,7 @@ public class OrderService {
 
     public List<Order> findAllOrdersByUserId(String userId) {
 
-        Optional<List<Order>> orderItems = orderDAO.findAllByUserId(userId);
+        Optional<List<Order>> orderItems = orderDAO.findPendingOrderByUserId(userId);
 
         if (orderItems.isEmpty()) {
             return new ArrayList<>();

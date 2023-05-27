@@ -39,18 +39,21 @@ public class CheckoutScreen implements IScreen {
                     case "1":
                         out.println("The contents of the order ...");
                         List<Order> orderItems = orderService.findAllOrdersByUserId(session.getId());
-//                        out.println(orderItems.toString());
 
-                        out.format("Order#: %s\n", orderItems.get(0).getOrderId());
+                        // Display the items in the order
+                        out.format("Order#: %s%n", orderItems.get(0).getOrderId());
                         AtomicInteger itemNum = new AtomicInteger(1);
                         orderItems.forEach(item -> {
-                            out.format("Item [%s] %nProduct#: %s %nName: %s %nPrice: %s %nOn Hand: %s%n%n",
+                            out.format("Item [%s]: \tProduct#: %s \tName: %s \tPrice: %s \tOn Hand: %s%n",
                                     itemNum.getAndIncrement(),
                                     item.getProduct().getId(),
                                     item.getProduct().getName(),
                                     item.getProduct().getPrice(),
                                     item.getProduct().getOnHand());
                         });
+
+                        // prompt for action, checkout, modify or clear order
+
 
 
                         scanner.nextLine();
