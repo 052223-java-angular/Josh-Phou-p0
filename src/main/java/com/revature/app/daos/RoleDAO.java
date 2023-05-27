@@ -32,7 +32,7 @@ public class RoleDAO implements ICrudDAO<Role> {
     }
 
     @Override
-    public Role findById(String id) {
+    public Optional<Role> findById(String id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findById'");
     }

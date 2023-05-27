@@ -3,6 +3,7 @@ package com.revature.app.daos;
 import com.revature.app.models.Department;
 
 import java.util.List;
+import java.util.Optional;
 
 public class DepartmentDAO implements ICrudDAO<Department> {
 
@@ -25,7 +26,7 @@ public class DepartmentDAO implements ICrudDAO<Department> {
     }
 
     @Override
-    public Department findById(String id) {
+    public Optional<Department> findById(String id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findById'");
     }

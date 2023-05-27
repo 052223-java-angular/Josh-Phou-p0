@@ -33,7 +33,7 @@ public class ProductDAO implements ICrudDAO<Product> {
     }
 
     @Override
-    public Product findById(String id) {
+    public Optional<Product> findById(String id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findById'");
     }

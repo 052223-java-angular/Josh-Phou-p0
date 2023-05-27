@@ -51,7 +51,7 @@ public class UserDAO implements ICrudDAO<User> {
     }
 
     @Override
-    public User findById(String id) {
+    public Optional<User> findById(String id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findById'");
     }

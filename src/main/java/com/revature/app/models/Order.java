@@ -7,6 +7,7 @@ import lombok.*;
 @ToString
 @Getter
 @Setter
+@Builder
 @EqualsAndHashCode
 public class Order {
 

@@ -50,6 +50,10 @@ public class RouterService {
         }
     }
 
+    /*
+     * ------------------------  Dependency injection helper methods ------------------------
+     */
+
     private UserService getUserService() {
         return new UserService(new UserDAO(), getRoleService());
     }
