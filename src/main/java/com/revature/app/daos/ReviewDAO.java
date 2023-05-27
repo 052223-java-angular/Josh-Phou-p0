@@ -1,9 +1,9 @@
 package com.revature.app.daos;
 
-import com.revature.app.models.Department;
 import com.revature.app.models.Review;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ReviewDAO implements ICrudDAO<Review> {
 
@@ -27,7 +27,7 @@ public class ReviewDAO implements ICrudDAO<Review> {
     }
 
     @Override
-    public Review findById(String id) {
+    public Optional<Review> findById(String id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findById'");
     }

@@ -7,6 +7,7 @@ import lombok.*;
 @ToString
 @Getter
 @Setter
+@Builder
 @EqualsAndHashCode
 public class Order {
 
@@ -15,5 +16,8 @@ public class Order {
     private String quantity;
     private String userId;
     private String productId;
+
+    private String orderId;
+    private Product product;
 
 }

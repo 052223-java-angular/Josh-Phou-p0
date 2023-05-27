@@ -34,6 +34,7 @@ CREATE TABLE users (
 
 CREATE TABLE orders (
     id VARCHAR PRIMARY KEY,
+    order_id VARCHAR NOT NULL,
     status VARCHAR NOT NULL,
     quantity VARCHAR NOT NULL,
     user_id VARCHAR NOT NULL,

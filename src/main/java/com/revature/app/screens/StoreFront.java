@@ -1,14 +1,17 @@
 package com.revature.app.screens;
 
+import com.revature.app.models.Session;
 import com.revature.app.services.RouterService;
-import com.revature.app.services.UserService;
 import lombok.AllArgsConstructor;
 
 import java.util.Scanner;
 
+import static java.lang.System.out;
+
 @AllArgsConstructor
-public class BrowseScreen implements IScreen {
+public class StoreFront implements IScreen {
     private final RouterService router;
+    private Session session;
 
     @Override
     public void start(Scanner scanner) {
@@ -24,7 +27,11 @@ public class BrowseScreen implements IScreen {
                 System.out.println("[2] View cart");
                 System.out.println("[3] View past orders");
                 System.out.println("[4] Leave a product review");
+                System.out.println("[5] Checkout - temporary option / placeholder");
                 System.out.println("[x] Exit");
+
+                // todo remove, just verifying user is being passed to the session object
+//                out.format("Checking the user is stored in the session object/instance: %s \n\n", session.toString());
 
                 System.out.print("\nEnter: ");
                 input = scanner.nextLine();
@@ -41,6 +48,10 @@ public class BrowseScreen implements IScreen {
                         break;
                     case "4":
                         router.navigate("/review", scanner);
+                        break;
+                    case "5":
+                        // todo remove, temporary route option
+                        router.navigate("/checkout", scanner);
                         break;
                     case "x":
                         break exit;

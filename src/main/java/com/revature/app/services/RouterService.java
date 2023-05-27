@@ -1,5 +1,6 @@
 package com.revature.app.services;
 
+import com.revature.app.daos.OrderDAO;
 import com.revature.app.daos.RoleDAO;
 import com.revature.app.daos.UserDAO;
 
@@ -9,8 +10,6 @@ import com.revature.app.screens.*;
 import lombok.AllArgsConstructor;
 
 import java.util.Scanner;
-
-import static java.lang.System.out;
 
 @AllArgsConstructor
 public class RouterService {
@@ -30,11 +29,8 @@ public class RouterService {
                 // after a successful login, the user should navigate to the browse screen
                 new LoginScreen(getUserService(), this, session).start(scanner);
                 break;
-            case "/browse":
-                // todo remove, just verifying user is being passed to the session object
-                out.format("Checking the user is being set to the session instance: %s \n\n", session.toString());
-
-                new BrowseScreen(this).start(scanner);
+            case "/storefront":
+                new StoreFront(this, session).start(scanner);
                 break;
             case "/products":
                 // todo inject the session object
@@ -43,6 +39,7 @@ public class RouterService {
             case "/cart":
                 break;
             case "/checkout":
+                new CheckoutScreen(getOrderService(), this, session).start(scanner);
                 break;
             case "/review":
                 break;
@@ -53,6 +50,10 @@ public class RouterService {
         }
     }
 
+    /*
+     * ------------------------  Dependency injection helper methods ------------------------
+     */
+
     private UserService getUserService() {
         return new UserService(new UserDAO(), getRoleService());
     }
@@ -61,4 +62,7 @@ public class RouterService {
         return new RoleService(new RoleDAO());
     }
 
+    private OrderService getOrderService() {
+        return new OrderService(new OrderDAO());
+    }
 }

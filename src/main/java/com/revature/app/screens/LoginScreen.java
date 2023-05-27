@@ -51,7 +51,7 @@ public class LoginScreen implements IScreen {
 
                 // found the user; store user the session object and then route to the browse screen
                 session.setSession(user);
-                routerService.navigate("/browse", scanner);
+                routerService.navigate("/storefront", scanner);
 
                 break exit;
             }
