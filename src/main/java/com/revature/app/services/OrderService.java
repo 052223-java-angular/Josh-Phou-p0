@@ -15,14 +15,15 @@ public class OrderService {
     private final OrderDAO orderDAO;
 
     public enum ORDER_STATUS {
-        PENDING, COMPLETE
+        PENDING, SHIPPING, COMPLETE
     }
 
-    /* Find orders by the given userId and status
+    /* Find orders by the given userId
     * */
     public List<Order> findOrderByUserId(String userId, ORDER_STATUS status) {
 
-        Optional<List<Order>> orderItems = orderDAO.findOrderByUserId(userId, status);
+        // retrieve the order by user id and current status
+        Optional<List<Order>> orderItems = orderDAO.findOrderByUserId(userId, String.valueOf(status.ordinal()));
 
         if (orderItems.isEmpty()) {
             return new ArrayList<>();
@@ -50,8 +51,13 @@ public class OrderService {
                 // when the newQuantity is 0, delete the item from the order
                 orderDAO.deleteProductFromOrder(orderId, productId);
             } else {
-                // when newQuantity is > 0, update the product quantity
-                orderDAO.updateQuantity(String.valueOf(newQuantity), orderId, productId);
+                // when inventory is negative, do not update
+                if (toInt(order.get().getProduct().getOnHand()) - toInt(order.get().getQuantity()) + 1 < 0) {
+                    out.format("%nUnable to increase quantity; not enough %s on hand%n", order.get().getProduct().getName());
+                } else {
+                    // when newQuantity is > 0, update the product quantity
+                    orderDAO.updateQuantity(String.valueOf(newQuantity), orderId, productId);
+                }
             }
         }
 
@@ -78,6 +84,20 @@ public class OrderService {
     /* Delete the orders records matching the order_id */
     public void deleteOrder(String orderId) {
         orderDAO.deleteByOrderId(orderId);
+    }
+
+    /* Update the status of the order to complete for checking out / purchase
+    * */
+    public void checkout(List<Order> orders) {
+
+        // update the order status to complete and on hand quantity for all items
+        for (Order order : orders) {
+            orderDAO.updateOrderStatus(
+                    String.valueOf(ORDER_STATUS.COMPLETE.ordinal()),
+                    order.getOrderId(),
+                    order.getProductId(),
+                    String.valueOf(toInt(order.getProduct().getOnHand()) - toInt(order.getQuantity())));
+        }
     }
 
     /* Convert a String to Integer */

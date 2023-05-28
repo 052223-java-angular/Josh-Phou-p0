@@ -28,6 +28,42 @@ public class OrderDAO implements ICrudDAO<Order> {
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 
+    /* Update the status of the order
+    * */
+    public int updateOrderStatus(String status, String orderId, String productId, String remainingOnHand) {
+        try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
+            // update the status of the order
+            String sql = "UPDATE ORDERS SET STATUS = ? " +
+                    "WHERE order_id = ? " +
+                    "AND product_id = ?";
+
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, status);
+                ps.setString(2, orderId);
+                ps.setString(3, productId);
+
+                ps.executeUpdate();
+            }
+
+            // update on_hand quantity in product
+            sql = "UPDATE PRODUCTS SET ON_HAND = ? WHERE id = ?";
+
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, remainingOnHand);
+                ps.setString(2, productId);
+
+                return ps.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to connect to the database", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot find application.properties", e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Unable to load JDBC driver", e);
+        }
+    }
+
     /* Updates the product order quantity matching the order_id and product_id
     * */
     public int updateQuantity(String quantity, String orderId, String productId) {
@@ -160,7 +196,7 @@ public class OrderDAO implements ICrudDAO<Order> {
     }
 
     /* Find orders by the users id */
-    public Optional<List<Order>> findOrderByUserId(String userId, OrderService.ORDER_STATUS status) {
+    public Optional<List<Order>> findOrderByUserId(String userId, String status) {
 
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
             String sql = "SELECT a.*, b.id as product_id, b.name as product_name, b.price, b.on_hand, b.departments_id " +
@@ -173,7 +209,7 @@ public class OrderDAO implements ICrudDAO<Order> {
 
             try (PreparedStatement ps = connection.prepareStatement(sql)) {
                 ps.setString(1, userId);
-                ps.setString(2, String.valueOf(status.ordinal()));
+                ps.setString(2, status);
 
                 try (ResultSet rs = ps.executeQuery()) {
                     List<Order> orderItemList = new ArrayList<>();
