@@ -38,12 +38,13 @@ public class RouterService {
                 break;
             case "/cart":
                 break;
+            case "/orders":
+                new OrderHistoryScreen(getOrderService(), this, session).start(scanner);
+                break;
             case "/checkout":
                 new CheckoutScreen(getOrderService(), this, session).start(scanner);
                 break;
             case "/review":
-                break;
-            case "/orderHistory":
                 break;
             default:
                 break;

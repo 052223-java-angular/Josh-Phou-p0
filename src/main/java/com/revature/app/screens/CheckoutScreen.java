@@ -224,12 +224,13 @@ public class CheckoutScreen implements IScreen {
         out.format("Order #: %s%n", orderItems.get(0).getOrderId());
         AtomicInteger itemNum = new AtomicInteger(1);
         orderItems.forEach(item -> {
-            out.format("Item [%s]: \tProduct#: %s \tName: %s \tOrder qty: %s \tPrice: %s \tOn Hand: %s%n",
+            out.format("Item [%s]: \tProduct#: %s \tName: %s \tOrder qty: %s \tPrice \\pc: $ %s \tTotal Cost $ %s \tOn Hand: %s%n",
                     itemNum.getAndIncrement(),
                     item.getProduct().getId(),
                     item.getProduct().getName(),
                     item.getQuantity(),
                     item.getProduct().getPrice(),
+                    String.valueOf(toDouble(item.getProduct().getPrice()) * toDouble(item.getQuantity())),
                     item.getProduct().getOnHand());
         });
 
@@ -242,7 +243,7 @@ public class CheckoutScreen implements IScreen {
         for (Order item : orderItems) {
             total += toDouble(item.getProduct().getPrice()) * toDouble(item.getQuantity());
         }
-        out.format("Order Total: $%s%n", total);
+        out.format("Order Total: $ %s%n", total);
     }
 
     /* Converts String value to double
