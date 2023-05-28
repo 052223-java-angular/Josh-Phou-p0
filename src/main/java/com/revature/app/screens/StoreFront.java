@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 
 import java.util.Scanner;
 
-import static java.lang.System.out;
-
 @AllArgsConstructor
 public class StoreFront implements IScreen {
     private final RouterService router;
@@ -50,7 +48,6 @@ public class StoreFront implements IScreen {
                         router.navigate("/review", scanner);
                         break;
                     case "5":
-                        // todo remove, temporary route option
                         router.navigate("/checkout", scanner);
                         break;
                     case "x":

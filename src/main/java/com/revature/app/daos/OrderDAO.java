@@ -2,7 +2,6 @@ package com.revature.app.daos;
 
 import com.revature.app.models.Order;
 import com.revature.app.models.Product;
-import com.revature.app.services.OrderService;
 import com.revature.app.utils.ConnectionFactory;
 
 import java.io.IOException;
@@ -113,13 +112,13 @@ public class OrderDAO implements ICrudDAO<Order> {
 
     /* Deletes all the records of an order by the order_id
     * */
-    public void deleteByOrderId(String orderId) {
+    public int deleteByOrderId(String orderId) {
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
             String sql = "DELETE FROM ORDERS WHERE order_id = ?";
 
             try (PreparedStatement ps = connection.prepareStatement(sql)) {
                 ps.setString(1, orderId);
-                ps.executeUpdate();
+                return ps.executeUpdate();
 
             }
         } catch (SQLException e) {
@@ -134,7 +133,7 @@ public class OrderDAO implements ICrudDAO<Order> {
 
     /* Delete a product from the orders table that matches the order_id and product_id
     * */
-    public void deleteProductFromOrder(String orderId, String productId) {
+    public int deleteProductFromOrder(String orderId, String productId) {
 
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
             String sql = "DELETE FROM ORDERS WHERE order_id = ? and product_id = ?";
@@ -143,7 +142,7 @@ public class OrderDAO implements ICrudDAO<Order> {
                 ps.setString(1, orderId);
                 ps.setString(2, productId);
 
-                ps.executeUpdate();
+                return ps.executeUpdate();
 
             }
         } catch (SQLException e) {

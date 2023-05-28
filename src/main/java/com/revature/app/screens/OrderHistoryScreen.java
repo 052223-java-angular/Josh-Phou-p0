@@ -6,11 +6,8 @@ import com.revature.app.services.OrderService;
 import com.revature.app.services.RouterService;
 import lombok.AllArgsConstructor;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.System.out;
 
@@ -82,8 +79,10 @@ public class OrderHistoryScreen implements IScreen {
     private void displayOrderItems(List<Order> orderItems) {
 
         // Display the items in the order
-        orderItems.stream().sorted((a, b) -> a.getOrderId().compareTo(b.getOrderId())).forEach(item -> {
-            out.format("OrderId: %s: \tProduct #: %s \tName: %s \tOrder qty: %s \tPrice \\pc: $ %s \tTotal Cost $ %s%n",
+        orderItems.stream()
+                .sorted((a, b) -> a.getOrderId().compareTo(b.getOrderId()))
+                .forEach(item -> {
+                    out.format("OrderId: %s: \tProduct #: %s \tName: %s \tOrder qty: %s \tPrice \\pc: $ %s \tTotal Cost $ %s%n",
                     item.getOrderId(),
                     item.getProduct().getId(),
                     item.getProduct().getName(),

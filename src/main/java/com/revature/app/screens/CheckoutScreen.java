@@ -5,6 +5,8 @@ import com.revature.app.models.Session;
 import com.revature.app.services.OrderService;
 import com.revature.app.services.RouterService;
 import lombok.AllArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.Scanner;
@@ -14,87 +16,86 @@ import static java.lang.System.out;
 
 @AllArgsConstructor
 public class CheckoutScreen implements IScreen {
-
+    private static final Logger logger = LogManager.getLogger(CheckoutScreen.class);
     private final OrderService orderService;
     private final RouterService routerService;
     private Session session;
 
     @Override
     public void start(Scanner scanner) {
-        String userSelection = "";
 
-        exit: {
+        while (true) {
+            logger.info("Entry into CheckoutScreen start(Scanner scanner) method.");
+            clearScreen();
+            out.println("Welcome to the checkout screen! \n" + session.getUsername());
+            out.println("\nWhat would you like to do?");
+            out.println("[1] View order");
+            out.println("[x] Return to store front\n");
 
-            while (true) {
+            logger.info("Collecting user input from the user.");
+            String userSelection = scanner.nextLine();
 
-                clearScreen();
-                out.println("Welcome to the checkout screen! \n" + session.getUsername());
-                out.println("\nWhat would you like to do?");
-                out.println("[1] View order");
-                out.println("[x] Return to store front\n");
+            if (userSelection.equalsIgnoreCase("1")) {
+                logger.info("Case 1 - view order: calling userService method findOrderByUserId()");
+                List<Order> orderItems = orderService.findOrderByUserId(session.getId(), OrderService.ORDER_STATUS.PENDING);
 
-                userSelection = scanner.nextLine();
-
-                switch (userSelection) {
-                    case "1":
-                        List<Order> orderItems = orderService.findOrderByUserId(session.getId(), OrderService.ORDER_STATUS.PENDING);
-
-                        if (orderItems.size() > 0) {
-                            out.println("The items in the order ...");
-                            displayOrderItems(orderItems);
-                            displayOrderTotal(orderItems);
-
-                            // prompt for action, checkout, modify or clear order
-                            out.println("\nWhat would you like to do next?");
-                            out.println("[1] Update quantity");
-                            out.println("[2] Remove product");
-                            out.println("[3] Delete order");
-                            out.println("[4] Checkout");
-                            out.println("[5} Return to store front");
-
-                            userSelection = scanner.nextLine();
-                            switch (userSelection) {
-                                case "1":
-                                    clearScreen();
-                                    updateQuantity(scanner, orderItems);
-                                    break;
-                                case "2":
-                                    clearScreen();
-                                    removeProductFromOrder(scanner, orderItems);
-                                    break;
-                                case "3":
-                                    clearScreen();
-                                    deleteOrder(scanner, orderItems);
-                                    break;
-                                case "4":
-                                    clearScreen();
-                                    checkout(scanner, orderItems, session.getUsername());
-                                    break;
-                                case "5":
-                                    routerService.navigate("/storefront", scanner);
-                                    break;
-                                default:
-                            }
-
-                        } else {
-                            clearScreen();
-                            out.println("\nYou have no orders, press any key to return to the store front");
-                            scanner.nextLine();
-                            routerService.navigate("/storefront", scanner);
-                            break;
-                        }
-
-                        continue;
-                    case "x":
-                        // return the user back to the storefront
-                        routerService.navigate("/storefront", scanner);
-                        break;
-                    default:
-
+                if (orderItems.size() <= 0) {
+                    logger.info("User has no open orders, routing user back to storefront.");
+                    clearScreen();
+                    out.println("\nYou have no orders, press any key to return to the store front");
+                    scanner.nextLine();
+                    routerService.navigate("/storefront", scanner);
+                    break;
                 }
 
-                break exit;
+                logger.info("Order list > 0, displaying order items and total.");
+                out.println("The items in the order ...");
+                displayOrderItems(orderItems);
+                displayOrderTotal(orderItems);
+
+                // prompt for action, checkout, modify or clear order
+                out.println("\nWhat would you like to do next?");
+                out.println("[1] Update quantity");
+                out.println("[2] Remove product");
+                out.println("[3] Delete order");
+                out.println("[4] Checkout");
+                out.println("Press any other key to go back to the store front");
+
+                logger.info("Prompting for user input on what to do next with order items.");
+                userSelection = scanner.nextLine();
+                switch (userSelection) {
+                    case "1":
+                        logger.info("User selected case 1: begin process of updating product quantity.");
+                        clearScreen();
+                        updateQuantity(scanner, orderItems);
+                        break;
+                    case "2":
+                        logger.info("User selected case 2: begin process of removing product from order.");
+                        clearScreen();
+                        removeProductFromOrder(scanner, orderItems);
+                        break;
+                    case "3":
+                        logger.info("User selected case 3: begin process of deleting an order.");
+                        clearScreen();
+                        deleteOrder(scanner, orderItems);
+                        break;
+                    case "4":
+                        logger.info("User selected case 4: begin process of checking out.");
+                        clearScreen();
+                        checkout(scanner, orderItems, session.getUsername());
+                        break;
+                    default:
+                        logger.info("User selected case 5: routing user to storefront.");
+                        routerService.navigate("/storefront", scanner);
+                        break;
+                }
+
+            } else {
+                // return the user back to the storefront
+                routerService.navigate("/storefront", scanner);
+                break;
             }
+
         }
 
 
@@ -118,25 +119,36 @@ public class CheckoutScreen implements IScreen {
         String itemToUpdate = scanner.nextLine();
         out.println("[1] Increase +");
         out.println("[2] Decrease -");
-        out.println("[x] Go back");
+        out.println("Any key to go back");
         String quantityOpt = scanner.nextLine();
 
         switch (quantityOpt) {
             case "1":
                 // when qty greater than 1, increase
-                orderService.updateProductOrderQuantity(
+                int result = orderService.updateProductOrderQuantity(
                         true,
                         orderItems.get(toInt(itemToUpdate) - 1).getOrderId(),
                         orderItems.get(toInt(itemToUpdate) - 1).getProductId());
+                if (result >= 1) {
+                    out.format("%nIncreased product order quantity for %s by 1.%n", orderItems.get(toInt(itemToUpdate) - 1).getProduct().getName());
+                } else {
+                    out.format("Product %s was not found for order %s, unable to increase product qty%n",
+                            orderItems.get(toInt(itemToUpdate) - 1).getOrderId(),
+                            orderItems.get(toInt(itemToUpdate) - 1).getProductId());
+                }
                 break;
             case "2":
                 // when qty equal or less than zero, confirm delete
-                orderService.updateProductOrderQuantity(
+                result = orderService.updateProductOrderQuantity(
                         false,
                         orderItems.get(toInt(itemToUpdate) - 1).getOrderId(),
                         orderItems.get(toInt(itemToUpdate) - 1).getProductId());
-                break;
-            case "x":
+                if (result >= 1) {
+                    out.format("%nDecreased product order quantity for %s by 1.%n", orderItems.get(toInt(itemToUpdate) - 1).getProduct().getName());
+                } else {
+                    out.format("%nUnable to increase quantity; not enough %s on hand%n",
+                            orderItems.get(toInt(itemToUpdate) - 1).getProduct().getName());
+                }
                 break;
             default:
                 clearScreen();
@@ -166,9 +178,15 @@ public class CheckoutScreen implements IScreen {
                 toInt(itemToRemove) - 1 < orderItems.size()) {
 
             // remove the product from the order
-            orderService.removeProductFromOrder(
+            int result = orderService.removeProductFromOrder(
                     orderItems.get(toInt(itemToRemove)-1).getOrderId(),
                     orderItems.get(toInt(itemToRemove)-1).getProductId());
+
+            if (result == 0) {
+                out.format("Product %s was not found for order %s, unable to remove%n",
+                        orderItems.get(toInt(itemToRemove)-1).getOrderId(),
+                        orderItems.get(toInt(itemToRemove)-1).getProductId());
+            }
         }
 
     }
@@ -183,7 +201,11 @@ public class CheckoutScreen implements IScreen {
         // when selected option is not "x" and less than products in orderItems
         if (!opt.equalsIgnoreCase("x")) {
             // remove the product from the order
-            orderService.deleteOrder(orderItems.get(0).getOrderId());
+            int result = orderService.deleteOrder(orderItems.get(0).getOrderId());
+            if (result == 0) {
+                out.format("%nUnable to delete the order having order_id %s because it was not found.",
+                        orderItems.get(0).getOrderId());
+            }
         }
 
     }
@@ -223,9 +245,12 @@ public class CheckoutScreen implements IScreen {
         // Display the items in the order
         out.format("Order #: %s%n", orderItems.get(0).getOrderId());
         AtomicInteger itemNum = new AtomicInteger(1);
-        orderItems.forEach(item -> {
-            out.format("Item [%s]: \tProduct#: %s \tName: %s \tOrder qty: %s \tPrice \\pc: $ %s \tTotal Cost $ %s \tOn Hand: %s%n",
+        orderItems.stream()
+                .sorted((a, b) -> a.getOrderId().compareTo(b.getOrderId()))
+                .forEach(item -> {
+                    out.format("Item [%s]: \tOrder #: %s \tProduct #: %s \tName: %s \tOrder qty: %s \tPrice \\pc: $ %s \tTotal Cost $ %s \tOn Hand: %s%n",
                     itemNum.getAndIncrement(),
+                    item.getOrderId(),
                     item.getProduct().getId(),
                     item.getProduct().getName(),
                     item.getQuantity(),
