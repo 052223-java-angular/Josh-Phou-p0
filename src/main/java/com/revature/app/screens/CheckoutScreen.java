@@ -25,18 +25,20 @@ public class CheckoutScreen implements IScreen {
     public void start(Scanner scanner) {
 
         while (true) {
-            logger.info("Entry into CheckoutScreen start(Scanner scanner) method.");
+            logger.info("Entering CheckoutScreen start(Scanner scanner) method.");
+
             clearScreen();
             out.println("Welcome to the checkout screen! \n" + session.getUsername());
             out.println("\nWhat would you like to do?");
             out.println("[1] View order");
             out.println("[x] Return to store front\n");
 
-            logger.info("Collecting user input from the user.");
+            logger.info("Collecting input from the user.");
             String userSelection = scanner.nextLine();
 
             if (userSelection.equalsIgnoreCase("1")) {
-                logger.info("Case 1 - view order: calling userService method findOrderByUserId()");
+                logger.info("Case 1 - view order: calling userService method findOrderByUserId().");
+
                 List<Order> orderItems = orderService.findOrderByUserId(session.getId(), OrderService.ORDER_STATUS.PENDING);
 
                 if (orderItems.size() <= 0) {
@@ -49,6 +51,7 @@ public class CheckoutScreen implements IScreen {
                 }
 
                 logger.info("Order list > 0, displaying order items and total.");
+
                 out.println("The items in the order ...");
                 displayOrderItems(orderItems);
                 displayOrderTotal(orderItems);
@@ -98,14 +101,18 @@ public class CheckoutScreen implements IScreen {
 
         }
 
-
     }
 
     /*
      * ------------------------  Menu Option Helper methods ------------------------
      */
 
-    /* Updates the order quantity of a product
+
+    /* Updates the product quantity for an order
+    *
+    * @param scanner scans for user input
+    * @param orderItems a list of items in an order
+    *
     * */
     private void updateQuantity(Scanner scanner, List<Order> orderItems) {
 
@@ -159,7 +166,12 @@ public class CheckoutScreen implements IScreen {
 
     }
 
-    /* Removes a product from the order
+
+    /* Removes a product from an order
+    *
+    * @param scanner scans for user input
+    * @param orderItems a list of items in an order
+    *
     * */
     private void removeProductFromOrder(Scanner scanner, List<Order> orderItems) {
 
@@ -191,8 +203,13 @@ public class CheckoutScreen implements IScreen {
 
     }
 
+
     /* Deletes the entire order
-    * */
+     *
+     * @param scanner scans for user input
+     * @param orderItems a list of items in an order
+     *
+     * */
     private void deleteOrder(Scanner scanner, List<Order> orderItems) {
         out.println("\nDelete your order?");
         out.println("Press any key to confirm (x to cancel)");
@@ -210,7 +227,13 @@ public class CheckoutScreen implements IScreen {
 
     }
 
-    /* Checkout and process the order
+
+    /* Checkout, process and change the status of an order
+     *
+     * @param scanner scans for user input
+     * @param orderItems a list of items in an order
+     * @param username the current users username
+     *
      * */
     private void checkout(Scanner scanner, List<Order> orderItems, String username) {
         out.println("\nChecking out...");
@@ -233,13 +256,15 @@ public class CheckoutScreen implements IScreen {
     }
 
     /*
-     * ------------------------  Helper methods ------------------------
+     * ------------------------  Display helper methods ------------------------
      */
 
 
-    /* Display the formatted order contents of the list
-    *
-    * */
+    /* Displays a formatted contents of the items / products in the list
+     *
+     * @param orderItems a list of items in an order
+     *
+     * */
     private void displayOrderItems(List<Order> orderItems) {
 
         // Display the items in the order
@@ -261,8 +286,12 @@ public class CheckoutScreen implements IScreen {
 
     }
 
-    /* Sums up and displays the order total
-    *  */
+
+    /* Sums up the product price and order quantity and displays the value as the order total
+     *
+     * @param orderItems a list of items in an order
+     *
+     * */
     private void displayOrderTotal(List<Order> orderItems) {
         double total = 0.00;
         for (Order item : orderItems) {
@@ -270,6 +299,7 @@ public class CheckoutScreen implements IScreen {
         }
         out.format("Order Total: $ %s%n", total);
     }
+
 
     /* Converts String value to double
     * */
@@ -281,6 +311,7 @@ public class CheckoutScreen implements IScreen {
         }
         return 0.00;
     }
+
 
     /* Converts String value to int
     * */
