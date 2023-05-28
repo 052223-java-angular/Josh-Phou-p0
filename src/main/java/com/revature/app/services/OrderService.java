@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static java.lang.System.out;
 
 @AllArgsConstructor
 public class OrderService {
@@ -57,7 +56,7 @@ public class OrderService {
     public int updateProductOrderQuantity(boolean increase, String orderId, String productId) {
 
         // verify the order and product exists
-        Optional<Order> order = orderDAO.findOrderByProductId(orderId, productId);
+        Optional<Order> order = orderDAO.findOrderByProductAndOrderId(orderId, productId);
 
         if (order.isEmpty()) {
             logger.info("Unable to locate any orders for order_id: {} and product_id: {}", orderId, productId);
@@ -91,7 +90,7 @@ public class OrderService {
     public int removeProductFromOrder(String orderId, String productId) {
 
         // verify the order and product exists
-        Optional<Order> order = orderDAO.findOrderByProductId(orderId, productId);
+        Optional<Order> order = orderDAO.findOrderByProductAndOrderId(orderId, productId);
 
         // when empty, return 0 to indicate update was not successful
         if (order.isEmpty()) {

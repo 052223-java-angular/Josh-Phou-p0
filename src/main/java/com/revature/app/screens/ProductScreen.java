@@ -50,6 +50,7 @@ public class ProductScreen implements IScreen {
                     break;
             }
 
+            break;
         }
     }
 

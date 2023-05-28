@@ -104,7 +104,7 @@ public class CheckoutScreen implements IScreen {
     }
 
     /*
-     * ------------------------  Menu Option Helper methods ------------------------
+     * ------------------------  Screen Helper methods ------------------------
      */
 
 
