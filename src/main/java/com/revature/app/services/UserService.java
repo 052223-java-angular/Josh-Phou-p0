@@ -3,15 +3,11 @@ package com.revature.app.services;
 import com.revature.app.daos.UserDAO;
 import com.revature.app.models.Role;
 import com.revature.app.models.User;
-import com.revature.app.utils.custom_exceptions.InvalidCredentialException;
-import com.revature.app.utils.custom_exceptions.UserNotFoundException;
 
 import lombok.AllArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Optional;
-
-import static java.lang.System.out;
 
 @AllArgsConstructor
 public class UserService {
