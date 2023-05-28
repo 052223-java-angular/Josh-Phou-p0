@@ -23,7 +23,7 @@ public class OrderDAO implements ICrudDAO<Order> {
     }
 
     @Override
-    public void update(String id) {
+    public void update(Order order) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }

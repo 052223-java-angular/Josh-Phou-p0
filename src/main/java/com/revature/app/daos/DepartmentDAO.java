@@ -14,7 +14,7 @@ public class DepartmentDAO implements ICrudDAO<Department> {
     }
 
     @Override
-    public void update(String id) {
+    public void update(Department department) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }

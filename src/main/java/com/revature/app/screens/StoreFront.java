@@ -16,8 +16,6 @@ public class StoreFront implements IScreen {
     @Override
     public void start(Scanner scanner) {
         String input = "";
-        // todo -- if this is not required, do remove so that screen flow is not interrupted
-//        scanner.nextLine();
 
         exit: {
             while (true) {
@@ -30,15 +28,12 @@ public class StoreFront implements IScreen {
                 System.out.println("[5] Checkout - temporary option / placeholder");
                 System.out.println("[x] Exit");
 
-                // todo remove, just verifying user is being passed to the session object
-//                out.format("Checking the user is stored in the session object/instance: %s \n\n", session.toString());
-
                 System.out.print("\nEnter: ");
                 input = scanner.nextLine();
 
                 switch (input.toLowerCase()){
                     case "1":
-                        router.navigate("/product", scanner);
+                        router.navigate("/products", scanner);
                         break;
                     case"2":
                         router.navigate("/cart", scanner);

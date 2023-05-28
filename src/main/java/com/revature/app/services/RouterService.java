@@ -1,8 +1,6 @@
 package com.revature.app.services;
 
-import com.revature.app.daos.OrderDAO;
-import com.revature.app.daos.RoleDAO;
-import com.revature.app.daos.UserDAO;
+import com.revature.app.daos.*;
 
 import com.revature.app.models.Session;
 import com.revature.app.screens.*;
@@ -19,7 +17,7 @@ public class RouterService {
     {
         switch (path){
             case "/home":
-                new HomeScreen(this).start(scanner);
+                new HomeScreen(this, session).start(scanner);
                 break;
             case "/register":
                 // Within the register screen, the user should return the main menu after completing the registration process
@@ -33,8 +31,7 @@ public class RouterService {
                 new StoreFront(this, session).start(scanner);
                 break;
             case "/products":
-                // todo inject the session object
-                new ProductScreen(this).start(scanner);
+                new ProductScreen(this, session).start(scanner);
                 break;
             case "/cart":
                 break;
@@ -42,12 +39,18 @@ public class RouterService {
                 new CheckoutScreen(getOrderService(), this, session).start(scanner);
                 break;
             case "/review":
+                new ReviewScreen(getReviewService(),this,session).start(scanner);
                 break;
             case "/orderHistory":
                 break;
             default:
                 break;
         }
+    }
+
+    public void productNavigate (Scanner scanner, String input)
+    {
+        new PurchaseScreen(getProductService(),this, session, input).start(scanner);
     }
 
     /*
@@ -65,4 +68,9 @@ public class RouterService {
     private OrderService getOrderService() {
         return new OrderService(new OrderDAO());
     }
+
+    private ProductService getProductService() {
+        return new ProductService(new ProductDAO());
+    }
+    private ReviewService getReviewService() { return new ReviewService(new ReviewDAO()); }
 }

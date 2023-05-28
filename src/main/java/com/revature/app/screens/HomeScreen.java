@@ -1,5 +1,6 @@
 package com.revature.app.screens;
 
+import com.revature.app.models.Session;
 import com.revature.app.services.RouterService;
 import lombok.AllArgsConstructor;
 
@@ -9,6 +10,7 @@ import static java.lang.System.out;
 @AllArgsConstructor
 public class HomeScreen implements IScreen {
     private final RouterService routerService;
+    private Session session;
 
     @Override
     public void start(Scanner scanner) {

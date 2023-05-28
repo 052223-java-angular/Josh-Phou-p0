@@ -20,7 +20,7 @@ public class RoleDAO implements ICrudDAO<Role> {
     }
 
     @Override
-    public void update(String id) {
+    public void update(Role role) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
