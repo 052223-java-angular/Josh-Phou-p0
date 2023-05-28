@@ -115,6 +115,7 @@ public class CheckoutScreen implements IScreen {
     *
     * */
     private void updateQuantity(Scanner scanner, List<Order> orderItems) {
+        logger.info("Entering updateQuantity(Scanner scanner, List<Order> orderItems) method.");
 
         out.println("\nWhich item would you like to update?");
         AtomicInteger itemNum = new AtomicInteger(1);
@@ -174,6 +175,7 @@ public class CheckoutScreen implements IScreen {
     *
     * */
     private void removeProductFromOrder(Scanner scanner, List<Order> orderItems) {
+        logger.info("Entering removeProductFromOrder(Scanner scanner, List<Order> orderItems)");
 
         out.println("\nWhich item would you like to remove?");
         AtomicInteger itemNum = new AtomicInteger(1);
@@ -182,7 +184,7 @@ public class CheckoutScreen implements IScreen {
                     itemNum.getAndIncrement(),
                     item.getProduct().getName());
         });
-        out.println("[x] Go back");
+        out.println("[x] or any key to go back");
         String itemToRemove = scanner.nextLine();
 
         // when selected option is not "x" and less than products in orderItems
@@ -211,6 +213,8 @@ public class CheckoutScreen implements IScreen {
      *
      * */
     private void deleteOrder(Scanner scanner, List<Order> orderItems) {
+        logger.info("Entering deleteOrder(Scanner scanner, List<Order> orderItems)");
+
         out.println("\nDelete your order?");
         out.println("Press any key to confirm (x to cancel)");
         String opt = scanner.nextLine();
@@ -236,6 +240,8 @@ public class CheckoutScreen implements IScreen {
      *
      * */
     private void checkout(Scanner scanner, List<Order> orderItems, String username) {
+        logger.info("Entering checkout(Scanner scanner, List<Order> orderItems, String username)");
+
         out.println("\nChecking out...");
         out.println("Press any key to continue (x to cancel)");
         String opt = scanner.nextLine();
@@ -266,6 +272,7 @@ public class CheckoutScreen implements IScreen {
      *
      * */
     private void displayOrderItems(List<Order> orderItems) {
+        logger.info("Entering displayOrderItems(List<Order> orderItems)");
 
         // Display the items in the order
         out.format("Order #: %s%n", orderItems.get(0).getOrderId());
@@ -293,6 +300,8 @@ public class CheckoutScreen implements IScreen {
      *
      * */
     private void displayOrderTotal(List<Order> orderItems) {
+        logger.info("Entering displayOrderTotal(List<Order> orderItems)");
+
         double total = 0.00;
         for (Order item : orderItems) {
             total += toDouble(item.getProduct().getPrice()) * toDouble(item.getQuantity());
