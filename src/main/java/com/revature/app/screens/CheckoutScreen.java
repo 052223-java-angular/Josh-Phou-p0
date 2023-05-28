@@ -67,9 +67,8 @@ public class CheckoutScreen implements IScreen {
                                     deleteOrder(scanner, orderItems);
                                     break;
                                 case "4":
-                                    // todo checkout
-                                    // collect payment info, address, name
-                                    // checkout and persist order by changing order status
+                                    clearScreen();
+                                    checkout(scanner, orderItems, session.getUsername());
                                     break;
                                 case "5":
                                     routerService.navigate("/storefront", scanner);
@@ -79,7 +78,7 @@ public class CheckoutScreen implements IScreen {
 
                         } else {
                             clearScreen();
-                            out.println("\nYou have no orders, press any key to return the store front");
+                            out.println("\nYou have no orders, press any key to return to the store front");
                             scanner.nextLine();
                             routerService.navigate("/storefront", scanner);
                             break;
@@ -185,6 +184,28 @@ public class CheckoutScreen implements IScreen {
         if (!opt.equalsIgnoreCase("x")) {
             // remove the product from the order
             orderService.deleteOrder(orderItems.get(0).getOrderId());
+        }
+
+    }
+
+    /* Checkout and process the order
+     * */
+    private void checkout(Scanner scanner, List<Order> orderItems, String username) {
+        out.println("\nChecking out...");
+        out.println("Press any key to continue (x to cancel)");
+        String opt = scanner.nextLine();
+
+        // when selected option is not "x" and less than products in orderItems
+        if (!opt.equalsIgnoreCase("x")) {
+
+            // todo extra feature -> add shipping, payment and new tables to store the address data
+            // collect payment info, address, name
+            // checkout and persist order by changing order status
+            // checkout and change order status to complete
+            orderService.checkout(orderItems);
+            out.println("Checkout complete - thank you for your order " + username);
+            out.println("Press any key to continue...");
+            scanner.nextLine();
         }
 
     }
