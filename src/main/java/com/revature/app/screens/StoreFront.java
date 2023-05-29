@@ -22,46 +22,46 @@ public class StoreFront implements IScreen {
     public void start(Scanner scanner) {
         String input = "";
 
-        exit: {
-            while (true) {
-                clearScreen();
-                out.println("Welcome to the -Company name- eStore\n");
-                out.println("[1] Select a product category");
-//                out.println("[2] View cart");
-                out.println("[3] View cart / orders");
-                out.println("[4] Leave a product review");
-                out.println("[5] Checkout - temporary option / placeholder");
-                out.println("[x] Exit");
+        while (true) {
+            clearScreen();
+            out.println("Welcome to the -Company name- eStore " + session.getUsername() + "!");
+            out.println("[1] Select a product category");
+            out.println("[2] View cart / orders");
+            out.println("[3] Checkout");
+            out.println("[4] Leave a product review");
+            out.println("[x] Press x to logout and return to the login / register screen");
+            out.println("[q] Logout and exit");
 
-                out.print("\nEnter: ");
-                input = scanner.nextLine();
+            out.print("\nEnter: ");
+            input = scanner.nextLine();
 
-                switch (input.toLowerCase()){
-                    case "1":
-                        router.navigate("/product", scanner);
-                        break;
-//                    case"2":
-//                        router.navigate("/cart", scanner);
-//                        break;
-                    case "3":
-                        router.navigate("/orders", scanner);
-                        break;
-                    case "4":
-                        router.navigate("/review", scanner);
-                        break;
-                    case "5":
-                        router.navigate("/checkout", scanner);
-                        break;
-                    case "x":
-                        break exit;
-                    default:
-                        clearScreen();
-                        out.println("Invalid option selected");
-                        out.print("Press enter to continue...");
-                        scanner.nextLine();
-                        break;
-                }
+            switch (input.toLowerCase()){
+                case "1":
+                    router.navigate("/product", scanner);
+                    break;
+                case "2":
+                    router.navigate("/orders", scanner);
+                    break;
+                case "3":
+                    router.navigate("/checkout", scanner);
+                    break;
+                case "4":
+                    router.navigate("/review", scanner);
+                    break;
+                case "x":
+                    session = new Session();
+                    router.navigate("/home", scanner);
+                    break;
+                case "q":
+                    break ;
+                default:
+                    clearScreen();
+                    out.println("Invalid option selected");
+                    out.print("Press enter to continue...");
+                    scanner.nextLine();
+                    continue;
             }
+            break;
         }
     }
 

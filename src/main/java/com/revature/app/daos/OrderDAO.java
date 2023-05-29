@@ -239,8 +239,8 @@ public class OrderDAO implements ICrudDAO<Order> {
      * @param status the ordinal string value of the order status
      * @return an optional containing a list of products / items in the order
      * */
-    public Optional<List<Order>> findOrderByUserId(String userId, String status) {
-        logger.info("Entering into findOrderByUserId(String userId, String status) ");
+    public Optional<List<Order>> findOrderByUserId(String userId) {
+        logger.info("Entering into findOrderByUserId(String userId) ");
 
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
             String sql = "SELECT a.*, b.id as product_id, b.name as product_name, b.price, b.on_hand, b.departments_id " +
@@ -248,12 +248,11 @@ public class OrderDAO implements ICrudDAO<Order> {
                     "INNER JOIN PRODUCTS AS b " +
                     "ON a.product_id = b.id " +
                     "WHERE user_id = ? " +
-                    "AND status = ? " +
                     "ORDER BY b.name";
 
             try (PreparedStatement ps = connection.prepareStatement(sql)) {
                 ps.setString(1, userId);
-                ps.setString(2, status);
+//                ps.setString(2, status);
 
                 try (ResultSet rs = ps.executeQuery()) {
                     List<Order> orderItemList = new ArrayList<>();
