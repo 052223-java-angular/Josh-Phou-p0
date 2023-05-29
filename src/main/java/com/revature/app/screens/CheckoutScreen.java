@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static java.lang.System.out;
 
@@ -39,7 +40,12 @@ public class CheckoutScreen implements IScreen {
             if (userSelection.equalsIgnoreCase("1")) {
                 logger.info("Case 1 - view order: calling userService method findOrderByUserId().");
 
-                List<Order> orderItems = orderService.findOrderByUserId(session.getId(), OrderService.ORDER_STATUS.PENDING);
+                List<Order> orderItems = orderService.findOrderByUserId(session.getId());
+
+                // filter results to only include products having a status value of "0" i.e. open / pending
+                orderItems = orderItems.stream()
+                        .filter(item -> item.getStatus().equalsIgnoreCase("0"))
+                        .toList();
 
                 if (orderItems.size() <= 0) {
                     logger.info("User has no open orders, routing user back to storefront.");

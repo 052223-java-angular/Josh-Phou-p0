@@ -61,9 +61,15 @@ public class OrderHistoryScreen implements IScreen {
     private void viewCurrentOrder(Scanner scanner) {
         logger.info("Entering into viewCurrentOrder(Scanner scanner)");
 
-        List<Order> orderItems = orderService.findOrderByUserId(session.getId(), OrderService.ORDER_STATUS.PENDING);
+        List<Order> orderItems = orderService.findOrderByUserId(session.getId());
+
+        // filter results to only include products having a status value of "0" i.e. open / pending
+        orderItems = orderItems.stream()
+                .filter(item -> item.getStatus().equalsIgnoreCase("0"))
+                .toList();
 
         if (orderItems.size() > 0) {
+
             clearScreen();
             displayOrderItems(orderItems);
             displayOrderTotal(orderItems);
@@ -81,10 +87,16 @@ public class OrderHistoryScreen implements IScreen {
     private void viewCompletedOrders(Scanner scanner) {
         logger.info("Entering into viewCompletedOrders(Scanner scanner)");
 
-        List<Order> orderItems = orderService.findOrderByUserId(session.getId(), OrderService.ORDER_STATUS.COMPLETE);
+        List<Order> orderItems = orderService.findOrderByUserId(session.getId());
 
         if (orderItems.size() > 0) {
             clearScreen();
+
+            // filter results to only include products having a status value of "2", i.e. complete
+            orderItems = orderItems.stream()
+                    .filter(item -> item.getStatus().equalsIgnoreCase("2"))
+                    .toList();
+
             displayOrderItems(orderItems);
             displayOrderTotal(orderItems);
         } else {

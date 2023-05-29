@@ -26,15 +26,14 @@ public class OrderService {
     /* Find orders by the given userId
      *
      * @param userId the user_id of a user
-     * @param status an enum indicating the status of an order
      * @return list of orders associated with user and matching the status
      * */
-    public List<Order> findOrderByUserId(String userId, ORDER_STATUS status) {
+    public List<Order> findOrderByUserId(String userId) {
 
 
         // retrieve the order by user id and current status
-        logger.info("Finding the order for user_id {} with status {}", userId, status.ordinal());
-        Optional<List<Order>> orderItems = orderDAO.findOrderByUserId(userId, String.valueOf(status.ordinal()));
+        logger.info("Finding the order for user_id {}", userId);
+        Optional<List<Order>> orderItems = orderDAO.findOrderByUserId(userId);
 
         if (orderItems.isEmpty()) {
             logger.info("Unable to locate any orders for user_id: {}", userId);
@@ -69,7 +68,7 @@ public class OrderService {
             return orderDAO.deleteProductFromOrder(orderId, productId);
         }
 
-        if (toInt(order.get().getProduct().getOnHand()) - toInt(order.get().getQuantity()) + 1 < 0) {
+        if (toInt(order.get().getProduct().getOnHand()) - toInt(order.get().getQuantity()) + 1 <= 0) {
             logger.info("Inventory level for product_id: {} is too low, cannot update the order quantity.", productId);
             return 0;
         }

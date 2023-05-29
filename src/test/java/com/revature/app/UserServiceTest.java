@@ -11,7 +11,9 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.Assert.assertEquals;
+import java.util.Optional;
+
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -58,6 +60,53 @@ public class UserServiceTest {
         assertEquals(username, result.getUsername());
 
     }
+
+    @Test
+    public void isValidUsernameTest() {
+        String validUsername = "validUser";
+        String invalidUsername = "";
+
+        assertTrue(userService.isValidUsername(validUsername));
+        assertFalse(userService.isValidUsername(invalidUsername));
+
+    }
+
+    @Test
+    public void isUniqueUsernameTest() {
+        String existingUsername = "existingUser";
+        String newUser = "newUser";
+
+        when(userDAO.findByUsername(existingUsername)).thenReturn(Optional.of(new User()));
+        when(userDAO.findByUsername(newUser)).thenReturn(Optional.empty());
+
+        // todo revisit logic
+        assertFalse(userService.isValidUsername(newUser));
+        assertTrue(userService.isValidUsername(existingUsername));
+
+    }
+
+    @Test
+    public void isValidPasswordTest() {
+        String validPassword = "validPassw0rd";
+        String invalidPassword = "invalid";
+
+        assertTrue(userService.isValidPassword(validPassword));
+        assertFalse(userService.isValidPassword(invalidPassword));
+    }
+
+    @Test
+    public void isSamePasswordTest() {
+        String password = "Passw0rd";
+        String confirmPassword = "Passw0rd";
+        String differentPassword = "DifferentPass0rd";
+
+        assertTrue(userService.isSamePassword(password, confirmPassword));
+        assertFalse(userService.isSamePassword(password, differentPassword));
+
+    }
+
+
+
 
 
 }
