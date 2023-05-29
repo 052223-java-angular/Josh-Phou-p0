@@ -120,13 +120,14 @@ public class OrderDAO implements ICrudDAO<Order> {
     }
 
 
+    // todo - update test and doc
     /* Updates the product order quantity matching the order_id and product_id
      *
      * @param orderId the order_id associated to the order
      * @param productId the product_id of the product
      * @return 1 to indicate success,  0 to indicate failure
      * */
-    public int updateQuantity(String quantity, String orderId, String productId) {
+    public int updateQuantity(String quantity, String onHandChangeQty, String orderId, String productId) {
         logger.info("updateQuantity(String quantity, String orderId, String productId)");
 
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
@@ -137,9 +138,20 @@ public class OrderDAO implements ICrudDAO<Order> {
                 ps.setString(2, orderId);
                 ps.setString(3, productId);
 
+                ps.executeUpdate();
+
+            }
+
+            sql = "UPDATE PRODUCTS SET ON_HAND = ? WHERE id = ?";
+
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, onHandChangeQty);
+                ps.setString(2, productId);
+
                 return ps.executeUpdate();
 
             }
+
         } catch (SQLException e) {
             throw new RuntimeException("Unable to connect to the database", e);
         } catch (IOException e) {

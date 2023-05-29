@@ -61,7 +61,9 @@ public class OrderService {
             return 0;
         }
 
+        // when order is found, determine whether increase or decrease can happen given current inventory levels
         int newQuantity = increase ? toInt(order.get().getQuantity()) + 1 : toInt(order.get().getQuantity()) -1;
+
         if (newQuantity <= 0) {
             logger.info("Deleting product_id: {} from order having order_id: {} because quantity is 0", productId, orderId);
             // when the newQuantity is 0, delete the item from the order
@@ -73,8 +75,12 @@ public class OrderService {
             return 0;
         }
 
+        // when all checks pass, update the product on_hand quantity too
+        int onHandChangeQty = newQuantity >  toInt(order.get().getQuantity()) ?
+                toInt(order.get().getProduct().getOnHand()) - 1 : toInt(order.get().getProduct().getOnHand()) + 1;
+
         logger.info("Updating the order quantity for product_id: {} belonging to order_id: {} ", productId, orderId);
-        return orderDAO.updateQuantity(String.valueOf(newQuantity), orderId, productId);
+        return orderDAO.updateQuantity(String.valueOf(newQuantity), String.valueOf(onHandChangeQty), orderId, productId);
 
     }
 

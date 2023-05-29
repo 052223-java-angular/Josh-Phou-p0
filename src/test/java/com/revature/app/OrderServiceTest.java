@@ -68,13 +68,13 @@ public class OrderServiceTest {
         order.setProduct(new Product("456", "Test Product", "19.99", "10", "789"));
 
         when(orderDAO.findOrderByProductAndOrderId(orderId, productId)).thenReturn(Optional.of(order));
-        when(orderDAO.updateQuantity(anyString(), anyString(), anyString())).thenReturn(1);
+        when(orderDAO.updateQuantity(anyString(), anyString(), anyString(), anyString())).thenReturn(1);
 
         int result = orderService.updateProductOrderQuantity(true, orderId, productId);
 
         assertEquals(1, result);
         verify(orderDAO, times(1)).findOrderByProductAndOrderId(orderId, productId);
-        verify(orderDAO, times(1)).updateQuantity("6", orderId, productId);
+        verify(orderDAO, times(1)).updateQuantity("6", "9", orderId, productId);
     }
 
     @Test
@@ -86,13 +86,13 @@ public class OrderServiceTest {
         order.setProduct(new Product("456", "Test Product", "19.99", "10", "789"));
 
         when(orderDAO.findOrderByProductAndOrderId(orderId, productId)).thenReturn(Optional.of(order));
-        when(orderDAO.updateQuantity(anyString(), anyString(), anyString())).thenReturn(1);
+        when(orderDAO.updateQuantity(anyString(), anyString(), anyString(), anyString())).thenReturn(1);
 
         int result = orderService.updateProductOrderQuantity(false, orderId, productId);
 
         assertEquals(1, result);
         verify(orderDAO, times(1)).findOrderByProductAndOrderId(orderId, productId);
-        verify(orderDAO, times(1)).updateQuantity("4", orderId, productId);
+        verify(orderDAO, times(1)).updateQuantity("5", "10", orderId, productId);
     }
 
     @Test
@@ -106,7 +106,7 @@ public class OrderServiceTest {
 
         assertEquals(0, result);
         verify(orderDAO, times(1)).findOrderByProductAndOrderId(orderId, productId);
-        verify(orderDAO, never()).updateQuantity(anyString(), anyString(), anyString());
+        verify(orderDAO, never()).updateQuantity(anyString(), anyString(), anyString(), anyString());
         verify(orderDAO, never()).deleteProductFromOrder(anyString(), anyString());
     }
 
@@ -125,7 +125,7 @@ public class OrderServiceTest {
 
         assertEquals(1, result);
         verify(orderDAO, times(1)).findOrderByProductAndOrderId(orderId, productId);
-        verify(orderDAO, never()).updateQuantity(anyString(), anyString(), anyString());
+        verify(orderDAO, never()).updateQuantity(anyString(), anyString(), anyString(), anyString());
         verify(orderDAO, times(1)).deleteProductFromOrder(orderId, productId);
     }
 
@@ -143,7 +143,7 @@ public class OrderServiceTest {
 
         assertEquals(0, result);
         verify(orderDAO, times(1)).findOrderByProductAndOrderId(orderId, productId);
-        verify(orderDAO, never()).updateQuantity(anyString(), anyString(), anyString());
+        verify(orderDAO, never()).updateQuantity(anyString(), anyString(), anyString(), anyString());
         verify(orderDAO, never()).deleteProductFromOrder(anyString(), anyString());
     }
 
