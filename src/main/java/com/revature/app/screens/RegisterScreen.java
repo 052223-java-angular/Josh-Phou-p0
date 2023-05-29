@@ -4,6 +4,8 @@ import com.revature.app.models.User;
 import com.revature.app.services.RouterService;
 import com.revature.app.services.UserService;
 import lombok.AllArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -12,68 +14,66 @@ import static java.lang.System.out;
 
 @AllArgsConstructor
 public class RegisterScreen implements IScreen {
+
+    private static final Logger logger = LogManager.getLogger(RegisterScreen.class);
     private final UserService userService;
     private final RouterService routerService;
 
     @Override
     public void start(Scanner scanner) {
-        String username = "";
-        String password = "";
+        logger.info("Entering into register screen");
 
-        exit: {
-            while (true) {
-                clearScreen();
-                out.println("Registering...");
+        while (true) {
+            clearScreen();
+            out.println("Registering...");
 
-                // get username
-                username = getUsername(scanner);
-
-                if (username.equals("x")) {
-                    break exit;
-                }
-
-                // get password
-                password = getPassword(scanner);
-
-                if (password.equals("x")) {
-                    break exit;
-                }
-
-                // confirm user's info
-                clearScreen();
-                out.println("Please confirm your credentials:");
-                out.println("\nUsername: " + username);
-                out.println("Password: " + password);
-                out.print("\nEnter (y/n): ");
-
-                switch (scanner.nextLine()) {
-                    case "y" -> {
-                        // register the user through the user service
-                        clearScreen();
-                        User user = userService.register(username, password);
-                        out.println("You have successfully registered as: " + user.getUsername());
-                        out.println("Press any key to return the main menu and login...\n");
-                        scanner.nextLine();
-                        clearScreen();
-                        routerService.navigate("/home", scanner);
-                    }
-                    case "n" -> {
-                        clearScreen();
-                        out.println("Restarting process...");
-                        out.print("\nPress enter to continue...");
-                        scanner.nextLine();
-                    }
-                    default -> {
-                        clearScreen();
-                        out.println("Invalid option!");
-                        out.print("\nPress enter to continue...");
-                        scanner.nextLine();
-                    }
-                }
-
+            // get username
+            String username = getUsername(scanner);
+            if (username.equals("x")) {
+                routerService.navigate("/home", scanner);
             }
-        }
 
+            // get password
+            String password = getPassword(scanner);
+            if (password.equals("x")) {
+                routerService.navigate("/home", scanner);
+            }
+
+            // confirm user's info
+            clearScreen();
+            out.println("Please confirm your credentials:");
+            out.println("\nUsername: " + username);
+            out.println("Password: " + password);
+            out.print("\nEnter (y/n): ");
+
+            switch (scanner.nextLine()) {
+                case "y" -> {
+                    // register the user through the user service
+                    clearScreen();
+                    User user = userService.register(username, password);
+                    out.println("\nYou have successfully registered as: " + user.getUsername());
+                    out.println("Press any key to return the main menu and login...\n");
+                    scanner.nextLine();
+                    clearScreen();
+                    routerService.navigate("/home", scanner);
+                }
+                case "n" -> {
+                    clearScreen();
+                    out.println("Restarting process...");
+                    out.print("\nPress enter to continue...");
+                    scanner.nextLine();
+                    continue;
+                }
+                default -> {
+                    clearScreen();
+                    out.println("Invalid option!");
+                    out.print("\nPress enter to continue...");
+                    scanner.nextLine();
+                    continue;
+                }
+            }
+            break;
+        }
     }
 
     /*
@@ -85,7 +85,7 @@ public class RegisterScreen implements IScreen {
 
         while (true) {
             out.print("\nEnter a username (x to cancel): ");
-            username = scanner.nextLine();
+            username = scanner.nextLine().trim();
 
             if (username.equalsIgnoreCase("x")) {
                 return "x";
@@ -119,7 +119,7 @@ public class RegisterScreen implements IScreen {
 
         while (true) {
             out.print("\nEnter a password (x to cancel): ");
-            password = scanner.nextLine();
+            password = scanner.nextLine().trim();
 
             if (password.equalsIgnoreCase("x")) {
                 return "x";
@@ -157,22 +157,6 @@ public class RegisterScreen implements IScreen {
     private void clearScreen() {
         out.print("\033[H\033[2J");
         out.flush();
-    }
-
-    private void clearConsole() {
-        try {
-            final String os = System.getProperty("os.name");
-            if (os.contains("Windows")) {
-                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-//                Runtime.getRuntime().exec(new String[]{"cmd", "cls"});
-            } else {
-                Runtime.getRuntime().exec(new String[]{"clear"});
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e.getMessage());
-        }
     }
 
 }
