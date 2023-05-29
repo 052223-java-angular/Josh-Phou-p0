@@ -126,14 +126,17 @@ public class OrderService {
      * */
     public void checkout(List<Order> orders) {
 
-        // update the order status to complete and on hand quantity for all items
-        logger.info("Checking out and updating the status of order having order_id: {}", orders.get(0).getOrderId());
-        for (Order order : orders) {
-            orderDAO.updateOrderStatus(
-                    String.valueOf(ORDER_STATUS.COMPLETE.ordinal()),
-                    order.getOrderId(),
-                    order.getProductId(),
-                    String.valueOf(toInt(order.getProduct().getOnHand()) - toInt(order.getQuantity())));
+        if (orders.size() > 0 ) {
+
+            // update the order status to complete and on hand quantity for all items
+            logger.info("Checking out and updating the status of order having order_id: {}", orders.get(0).getOrderId());
+            for (Order order : orders) {
+                orderDAO.updateOrderStatus(
+                        String.valueOf(ORDER_STATUS.COMPLETE.ordinal()),
+                        order.getOrderId(),
+                        order.getProductId(),
+                        String.valueOf(toInt(order.getProduct().getOnHand()) - toInt(order.getQuantity())));
+            }
         }
     }
 

@@ -120,15 +120,16 @@ public class OrderDAO implements ICrudDAO<Order> {
     }
 
 
-    // todo - update test and doc
     /* Updates the product order quantity matching the order_id and product_id
      *
+     * @param quantity the product order quantity
+     * @param onHandChangeQty the updated on_hand quantity
      * @param orderId the order_id associated to the order
      * @param productId the product_id of the product
      * @return 1 to indicate success,  0 to indicate failure
      * */
     public int updateQuantity(String quantity, String onHandChangeQty, String orderId, String productId) {
-        logger.info("updateQuantity(String quantity, String orderId, String productId)");
+        logger.info("updateQuantity(String quantity, String onHandChangeQty, String orderId, String productId)");
 
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
             String sql = "UPDATE ORDERS SET QUANTITY = ? WHERE order_id = ? and product_id = ?";

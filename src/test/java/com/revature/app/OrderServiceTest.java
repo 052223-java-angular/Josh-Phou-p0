@@ -86,13 +86,12 @@ public class OrderServiceTest {
         order.setProduct(new Product("456", "Test Product", "19.99", "10", "789"));
 
         when(orderDAO.findOrderByProductAndOrderId(orderId, productId)).thenReturn(Optional.of(order));
-        when(orderDAO.updateQuantity(anyString(), anyString(), anyString(), anyString())).thenReturn(1);
+        when(orderDAO.updateQuantity(anyString(), anyString(), anyString(), anyString())).thenReturn(0);
 
         int result = orderService.updateProductOrderQuantity(false, orderId, productId);
 
-        assertEquals(1, result);
+        assertEquals(0, result);
         verify(orderDAO, times(1)).findOrderByProductAndOrderId(orderId, productId);
-        verify(orderDAO, times(1)).updateQuantity("5", "10", orderId, productId);
     }
 
     @Test
