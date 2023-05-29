@@ -29,7 +29,7 @@ public class CheckoutScreen implements IScreen {
             logger.info("Entering CheckoutScreen start(Scanner scanner) method.");
 
             clearScreen();
-            out.println("Welcome to the checkout screen! \n" + session.getUsername());
+            out.println("Welcome to the checkout " + session.getUsername() + "!");
             out.println("\nWhat would you like to do?");
             out.println("[1] View order");
             out.println("[x] Return to store front\n");
@@ -50,7 +50,7 @@ public class CheckoutScreen implements IScreen {
                 if (orderItems.size() <= 0) {
                     logger.info("User has no open orders, routing user back to storefront.");
                     clearScreen();
-                    out.println("\nYou have no orders, press any key to return to the store front");
+                    out.println("\nYou have no orders, press enter to return to the store front");
                     scanner.nextLine();
                     routerService.navigate("/storefront", scanner);
                     break;
@@ -133,7 +133,7 @@ public class CheckoutScreen implements IScreen {
         String itemToUpdate = scanner.nextLine();
         out.println("[1] Increase +");
         out.println("[2] Decrease -");
-        out.println("Any key to go back");
+        out.println("Press enter key to go back");
         String quantityOpt = scanner.nextLine();
 
         switch (quantityOpt) {
@@ -166,7 +166,7 @@ public class CheckoutScreen implements IScreen {
                 break;
             default:
                 clearScreen();
-                out.println("Invalid option - press any key to return to checkout");
+                out.println("Invalid option - press enter key to return to checkout");
                 break;
         }
 
@@ -190,7 +190,7 @@ public class CheckoutScreen implements IScreen {
                     itemNum.getAndIncrement(),
                     item.getProduct().getName());
         });
-        out.println("[x] or any key to go back");
+        out.println("[x] or enter key to go back");
         String itemToRemove = scanner.nextLine();
 
         // when selected option is not "x" and less than products in orderItems
@@ -222,7 +222,7 @@ public class CheckoutScreen implements IScreen {
         logger.info("Entering deleteOrder(Scanner scanner, List<Order> orderItems)");
 
         out.println("\nDelete your order?");
-        out.println("Press any key to confirm (x to cancel)");
+        out.println("Press enter to confirm (x to cancel)");
         String opt = scanner.nextLine();
 
         // when selected option is not "x" and less than products in orderItems
@@ -249,7 +249,7 @@ public class CheckoutScreen implements IScreen {
         logger.info("Entering checkout(Scanner scanner, List<Order> orderItems, String username)");
 
         out.println("\nChecking out...");
-        out.println("Press any key to continue (x to cancel)");
+        out.println("Press enter to continue (x to cancel)");
         String opt = scanner.nextLine();
 
         // when selected option is not "x" and less than products in orderItems
@@ -261,7 +261,7 @@ public class CheckoutScreen implements IScreen {
             // checkout and change order status to complete
             orderService.checkout(orderItems);
             out.println("Checkout complete - thank you for your order " + username);
-            out.println("Press any key to continue...");
+            out.println("Press enter to continue...");
             scanner.nextLine();
         }
 

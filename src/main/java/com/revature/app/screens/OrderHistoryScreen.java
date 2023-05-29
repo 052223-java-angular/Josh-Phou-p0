@@ -28,10 +28,10 @@ public class OrderHistoryScreen implements IScreen {
 
         while (true) {
 
-            out.println("What would you like to do?");
+            out.println("What would you like to do " + session.getUsername() + "?");
             out.println("[1] View current cart");
             out.println("[2] View completed orders");
-            out.println("[x] or any key to go back to the storefront");
+            out.println("[x] or press enter to go back to the storefront");
             String input = scanner.nextLine();
 
             switch (input) {
@@ -76,7 +76,7 @@ public class OrderHistoryScreen implements IScreen {
         } else {
             out.println("Unable to find a current cart");
         }
-        out.println("Press any key to continue...");
+        out.println("Press enter key to continue...");
         scanner.nextLine();
     }
 
@@ -102,7 +102,7 @@ public class OrderHistoryScreen implements IScreen {
         } else {
             out.println("Unable to find any orders");
         }
-        out.println("Press any key to continue...");
+        out.println("Press enter key to continue...");
         scanner.nextLine();
     }
 
