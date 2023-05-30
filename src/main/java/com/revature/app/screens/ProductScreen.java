@@ -48,28 +48,35 @@ public class ProductScreen implements IScreen {
                     String pId = getPId(items, index);
                     quantity = getQuantity(items, index, scanner);
                     //check if there is a cart fetch/yes create/no
-                    Order order = getOrder(pId);
+                    Order order = getOrder();
+                    System.out.println(order);
                     //check if item is in cart
                     boolean check = productInCart(pId);
                     //in cart/update quantity not/create entry
                     if (check) {
                         quantityUpdate(pId, quantity);
                     }else {
-                        order.setId(createOrderUUID());
-                        order.setStatus("0");
-                        order.setQuantity(Integer.toString(quantity));
-                        order.setUserId(session.getId());
-                        order.setProductId(pId);
+                        createOrder(order, Integer.toString(quantity), pId);
                         addToOrder(order);
                     }
                     //return to selection screen
-                    continue;
+                    break;
                 case"2":
-                    continue;
+                    System.out.println("\nEnter a product name: ");
+                    String name = scanner.nextLine();
+                    getProductByName(name);
+                    System.out.println("\nEnter quantity to add to cart or [x] to go back.");
+                    input = scanner.nextLine();
+                    addToCart(name, input);
+                    break;
                 case "3":
-                    continue;
+                    System.out.println("Enter min product price");
+                    input = scanner.nextLine();
+                    System.out.println("Enter max product price");
+                    input = scanner.nextLine();
+                    break;
                 case "x":
-                    router.navigate("/browse", scanner);
+                    router.navigate("/storefront", scanner);
                     break;
                 default:
                     clearScreen();
@@ -78,8 +85,6 @@ public class ProductScreen implements IScreen {
                     scanner.nextLine();
                     break;
             }
-
-            break;
         }
     }
 
@@ -115,10 +120,6 @@ public class ProductScreen implements IScreen {
                     break;
             }
         }
-    }
-
-    public String getProductId(String name) {
-        return this.productService.getId(name);
     }
 
     public String getIndex(List<Product> items, Scanner scanner) {
@@ -185,8 +186,8 @@ public class ProductScreen implements IScreen {
         }
     }
 
-    public Order getOrder(String id) {
-        Optional<Order> currentOrder = productService.retrieveOrder(id, session.getId());
+    public Order getOrder() {
+        Optional<Order> currentOrder = productService.retrieveOrder(session.getId());
         if (currentOrder.isEmpty()) {
             Order newOrder = new Order();
             newOrder.setOrderId(createOrderUUID());
@@ -218,8 +219,42 @@ public class ProductScreen implements IScreen {
         productService.updateOnHand(productId,session.getId(),quant);
     }
 
+    public void createOrder(Order order, String quantity, String pId ) {
+        order.setId(createOrderUUID());
+        order.setStatus("0");
+        order.setQuantity(quantity);
+        order.setUserId(session.getId());
+        order.setProductId(pId);
+    }
+
     public void addToOrder (Order order) {
         this.productService.addToOrder(order);
+    }
+
+    public void getProductByName(String name) {
+        Optional<Product> search = this.productService.findByName(name);
+        if ( search.isEmpty() ) {
+            System.out.println("Product does not exist in database");
+        }
+        Product product = search.get();
+        System.out.println(product.getName() + " costs " + product.getPrice() + " and there are [" + product.getOnHand() + "] currently on hand");
+    }
+
+    public void addToCart(String name, String quantity) {
+        Optional<Product> getProduct = this.productService.findByName(name);
+        Order order = getOrder();
+        Product product = getProduct.get();
+        if (Integer.parseInt(product.getOnHand())>= Integer.parseInt(quantity) && Integer.parseInt(quantity) > 0) {
+            boolean check = productInCart(product.getId());
+            if (check) {
+                quantityUpdate(product.getId(), Integer.parseInt(quantity));
+            }else {
+                createOrder(order, quantity, product.getId());
+                addToOrder(order);
+            }
+        }else {
+            System.out.println("Invalid entry");
+        }
     }
 
     /* ------------------------ Helper methods ------------------------------*/

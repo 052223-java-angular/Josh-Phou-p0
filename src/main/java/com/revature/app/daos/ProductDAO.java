@@ -120,7 +120,8 @@ public class ProductDAO implements ICrudDAO<Product> {
         }
     }
 
-    public String findByName (String name) {
+    public Optional<Product> findByName (String name) {
+        Product product = new Product();
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
             String sql = "SELECT * FROM products WHERE name = ?";
 
@@ -129,8 +130,13 @@ public class ProductDAO implements ICrudDAO<Product> {
                 ps.setString(1,  name);
 
                 try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        return rs.getString("id");
+                    if (rs.next()) {
+                        product.setId(rs.getString("id"));
+                        product.setName(rs.getString("name"));
+                        product.setPrice(rs.getString("price"));
+                        product.setOnHand(rs.getString("on_hand"));
+                        product.setDepartmentId(rs.getString("departments_id"));
+                        return Optional.of(product);
                     }
                 }
             }
@@ -142,7 +148,7 @@ public class ProductDAO implements ICrudDAO<Product> {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Unable to load JDBC driver", e);
         }
-        return "";
+        return Optional.empty();
     }
 
 }

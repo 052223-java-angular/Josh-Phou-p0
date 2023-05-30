@@ -24,11 +24,11 @@ public class ProductService {
 
     public void addToOrder (Order order){ this.orderDAO.save(order); }
 
-    public Optional<Order> retrieveOrder (String pId, String user_id) { return orderDAO.findByUserId(pId, user_id); }
+    public Optional<Order> retrieveOrder (String user_id) { return orderDAO.findByUserId(user_id); }
 
     public boolean inCartCheck(String pId, String user) {
         return this.orderDAO.cartCheck(pId, user);
     }
 
-    public String getId(String name) { return this.productDAO.findByName(name); }
+    public Optional<Product> findByName(String name) { return this.productDAO.findByName(name); }
 }

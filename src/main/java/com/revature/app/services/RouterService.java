@@ -53,7 +53,6 @@ public class RouterService {
                 logger.info("Instantiating ReviewScreen and injecting in OrderService, RouterService and session");
                 new ReviewScreen(getReviewService(),this,session).start(scanner);
                 break;
-            case "product":
             default:
                 break;
         }
