@@ -68,19 +68,19 @@ public class OrderService {
         if (newQuantity <= 0) {
             logger.info("Deleting product_id: {} from order having order_id: {} because quantity is 0", productId, orderId);
             // update on_hand quantity by quantity in order
-            int newOnHandQty =  toInt(order.get().getQuantity()) + order.get().getProduct().getOnHand();
+            int newOnHandQty = Integer.parseInt(toInt(order.get().getQuantity()) + order.get().getProduct().getOnHand());
             // when the newQuantity is 0, delete the item from the order
             return orderDAO.deleteProductFromOrder(String.valueOf(newOnHandQty), orderId, productId);
         }
 
-        if (order.get().getProduct().getOnHand() - toInt(order.get().getQuantity()) + 1 <= 0) {
+        if (toInt(order.get().getProduct().getOnHand()) - toInt(order.get().getQuantity()) + 1 <= 0) {
             logger.info("Inventory level for product_id: {} is too low, cannot update the order quantity.", productId);
             return 0;
         }
 
         // when all checks pass, update the product on_hand quantity too
         int onHandChangeQty = newQuantity >  toInt(order.get().getQuantity()) ?
-                order.get().getProduct().getOnHand() - 1 : order.get().getProduct().getOnHand() + 1;
+                toInt(order.get().getProduct().getOnHand()) - 1 : toInt(order.get().getProduct().getOnHand()) + 1;
 
         logger.info("Updating the order quantity for product_id: {} belonging to order_id: {} ", productId, orderId);
         return orderDAO.updateQuantity(String.valueOf(newQuantity), String.valueOf(onHandChangeQty), orderId, productId);
@@ -106,7 +106,7 @@ public class OrderService {
         }
 
         // update on_hand quantity by quantity in order
-        int newOnHandQty =  toInt(order.get().getQuantity()) + order.get().getProduct().getOnHand();
+        int newOnHandQty = toInt(order.get().getQuantity()) + toInt(order.get().getProduct().getOnHand());
 
         logger.info("Deleting product_id: {} from order having order_id: {}", productId, orderId);
         return orderDAO.deleteProductFromOrder(String.valueOf(newOnHandQty), orderId, productId);
@@ -141,7 +141,7 @@ public class OrderService {
                         String.valueOf(ORDER_STATUS.COMPLETE.ordinal()),
                         order.getOrderId(),
                         order.getProductId(),
-                        String.valueOf(order.getProduct().getOnHand() - toInt(order.getQuantity())));
+                        String.valueOf(toInt(order.getProduct().getOnHand()) - toInt(order.getQuantity())));
             }
         }
     }

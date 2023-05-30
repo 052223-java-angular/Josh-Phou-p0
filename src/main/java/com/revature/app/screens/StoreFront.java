@@ -25,7 +25,7 @@ public class StoreFront implements IScreen {
         while (true) {
             clearScreen();
             out.println("Welcome to the -Company name- eStore " + session.getUsername() + "!");
-            out.println("[1] Select a product category");
+            out.println("[1] Products");
             out.println("[2] View cart / orders");
             out.println("[3] Checkout");
             out.println("[4] Leave a product review");

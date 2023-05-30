@@ -22,7 +22,6 @@ public class ProductScreen implements IScreen {
     public void start(Scanner scanner) {
         String input;
         int quantity;
-        String pId;
 
         while (true) {
             clearScreen();
@@ -45,10 +44,14 @@ public class ProductScreen implements IScreen {
                     List<Product> items = getProducts(input);
                     //display list and select
                     clearScreen();
-                    input = displayProducts(items, scanner);
-                    pId = getProductId(input);
-                    quantity = getQuantity(items, input, scanner);
+                    String index = displayProducts(items, scanner);
+                    String pId = getProductId(items.get(i).getName());
+                    System.out.println(pId);
+                    System.out.println("get quantity");
+                    quantity = getQuantity(items, index, scanner);
+                    System.out.println(quantity);
                     //check if there is a cart fetch/yes create/no
+                    System.out.println("order");
                     Order order = getOrder(pId);
                     System.out.println(order);
                     //check if item is in cart
@@ -67,9 +70,9 @@ public class ProductScreen implements IScreen {
                     //return to selection screen
                     continue;
                 case"2":
-                    break;
+                    continue;
                 case "3":
-                    break;
+                    continue;
                 case "x":
                     router.navigate("/browse", scanner);
                     break;
@@ -135,50 +138,53 @@ public class ProductScreen implements IScreen {
             }
             System.out.println("\nEnter: ");
 
-            String input = scanner.nextLine();
-            switch (input.toLowerCase()) {
-                case "1", "2", "3", "4":
-                    int i = Integer.parseInt(input) - 1;
-                    return items.get(i).getId();
-                default:
-                    clearScreen();
-                    System.out.println("Invalid option selected");
-                    System.out.print("Press enter to continue...");
-                    scanner.nextLine();
+            while (true) {
+                String input = scanner.nextLine();
+                switch (input.toLowerCase()) {
+                    case "1", "2", "3", "4":
+                        int i = Integer.parseInt(input) - 1;
+                        return items.get(i).getId();
+                    default:
+                        clearScreen();
+                        System.out.println("Invalid option selected------display");
+                        System.out.print("Press enter to continue...");
+                        scanner.nextLine();
                     break;
+                }
             }
         }
     }
 
     public int getQuantity (List<Product> items, String input, Scanner scanner) {
         int quantity = 0;
-        switch (input) {
-            case "1", "2", "3", "4":
-                int num = Integer.parseInt(input) - 1;
-                System.out.println(items.get(num).getName() + " for " + items.get(num).getPrice());
-                System.out.println("\nAmount to purchase: ");
+        while(true) {
+            switch (input) {
+                case "1", "2", "3", "4":
+                    int num = Integer.parseInt(input) - 1;
+                    System.out.println(input);
+                    System.out.println(items.get(num).getName() + " for " + items.get(num).getPrice());
+                    System.out.println("\nAmount to purchase: ");
 
-                try {
-                    quantity = scanner.nextInt();
-                }catch(Exception e) {
-                    System.out.println("Invalid option selected");
+                    try {
+                        quantity = scanner.nextInt();
+                    } catch (Exception e) {
+                        System.out.println("Invalid option selected-----quantity");
+                        System.out.print("Press enter to continue...");
+                        scanner.nextLine();
+                    }
+                    if (quantity <= Integer.parseInt(items.get(num).getOnHand()) && quantity > 0) {
+                        return quantity;
+                    }
+                        break;
+
+                default:
+                    clearScreen();
+                    System.out.println("Invalid option selected-------default quantity");
                     System.out.print("Press enter to continue...");
                     scanner.nextLine();
                     break;
-                }
-                if (quantity <= Integer.parseInt(items.get(num).getOnHand()) && quantity > 0) {
-                    return quantity;
-                }else{
-                    break;
-                }
-            default:
-                clearScreen();
-                System.out.println("Invalid option selected");
-                System.out.print("Press enter to continue...");
-                scanner.nextLine();
-                break;
+            }
         }
-        return quantity;
     }
 
     public Order getOrder(String id) {
