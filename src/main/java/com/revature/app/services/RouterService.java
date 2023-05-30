@@ -1,8 +1,6 @@
 package com.revature.app.services;
 
-import com.revature.app.daos.OrderDAO;
-import com.revature.app.daos.RoleDAO;
-import com.revature.app.daos.UserDAO;
+import com.revature.app.daos.*;
 
 import com.revature.app.models.Session;
 import com.revature.app.screens.*;
@@ -24,7 +22,7 @@ public class RouterService {
         switch (path){
             case "/home":
                 logger.info("Instantiating HomeScreen and injecting in RouterService");
-                new HomeScreen(this).start(scanner);
+                new HomeScreen(this, session).start(scanner);
                 break;
             case "/register":
                 logger.info("Instantiating RegisterScreen and injecting in UserService and RouterService");
@@ -41,9 +39,7 @@ public class RouterService {
                 break;
             case "/products":
                 logger.info("Instantiating ProductScreen and injecting in RouterService");
-                new ProductScreen(this).start(scanner);
-                break;
-            case "/cart":
+                new ProductScreen(getProductService(), this, session).start(scanner);
                 break;
             case "/orders":
                 logger.info("Instantiating OrderHistoryScreen and injecting in OrderService, RouterService and session");
@@ -54,11 +50,20 @@ public class RouterService {
                 new CheckoutScreen(getOrderService(), this, session).start(scanner);
                 break;
             case "/review":
+                logger.info("Instantiating ReviewScreen and injecting in OrderService, RouterService and session");
+                new ReviewScreen(getReviewService(),this,session).start(scanner);
                 break;
+            case "product":
             default:
                 break;
         }
     }
+
+    //public void productNavigate (Scanner scanner, String input)
+    //{
+    //    logger.info("Instantiating PurchaseScreen and injecting in ProductService, RouterService, session, and category input");
+     //   new PurchaseScreen(getProductService(),this, session, input).start(scanner);
+   // }
 
     /*
      * ------------------------  Dependency injection helper methods ------------------------
@@ -75,4 +80,8 @@ public class RouterService {
     private OrderService getOrderService() {
         return new OrderService(new OrderDAO());
     }
+
+    private ProductService getProductService() { return new ProductService(new ProductDAO(), new OrderDAO()); }
+
+    private ReviewService getReviewService() { return new ReviewService(new ReviewDAO()); }
 }

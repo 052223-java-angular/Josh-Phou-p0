@@ -17,4 +17,8 @@ public class Product {
     private String onHand;
     private String departmentId;
 
+    public Product(String productId, String productName, String price, String onHand, String departmentsId) {
+
+    }
+
 }

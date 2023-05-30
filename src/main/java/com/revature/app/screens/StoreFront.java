@@ -32,12 +32,13 @@ public class StoreFront implements IScreen {
             out.println("[x] Press x to logout and return to the login / register screen");
             out.println("[q] Logout and exit");
 
+
             out.print("\nEnter: ");
             input = scanner.nextLine();
 
             switch (input.toLowerCase()){
                 case "1":
-                    router.navigate("/product", scanner);
+                    router.navigate("/products", scanner);
                     break;
                 case "2":
                     router.navigate("/orders", scanner);
