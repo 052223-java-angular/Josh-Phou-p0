@@ -7,10 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -122,12 +119,14 @@ public class OrderDAO implements ICrudDAO<Order> {
 
     /* Updates the product order quantity matching the order_id and product_id
      *
+     * @param quantity the product order quantity
+     * @param onHandChangeQty the updated on_hand quantity
      * @param orderId the order_id associated to the order
      * @param productId the product_id of the product
      * @return 1 to indicate success,  0 to indicate failure
      * */
-    public int updateQuantity(String quantity, String orderId, String productId) {
-        logger.info("updateQuantity(String quantity, String orderId, String productId)");
+    public int updateQuantity(String quantity, String onHandChangeQty, String orderId, String productId) {
+        logger.info("updateQuantity(String quantity, String onHandChangeQty, String orderId, String productId)");
 
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
             String sql = "UPDATE ORDERS SET QUANTITY = ? WHERE order_id = ? and product_id = ?";
@@ -137,9 +136,20 @@ public class OrderDAO implements ICrudDAO<Order> {
                 ps.setString(2, orderId);
                 ps.setString(3, productId);
 
+                ps.executeUpdate();
+
+            }
+
+            sql = "UPDATE PRODUCTS SET ON_HAND = ? WHERE id = ?";
+
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, onHandChangeQty);
+                ps.setString(2, productId);
+
                 return ps.executeUpdate();
 
             }
+
         } catch (SQLException e) {
             throw new RuntimeException("Unable to connect to the database", e);
         } catch (IOException e) {
@@ -177,20 +187,32 @@ public class OrderDAO implements ICrudDAO<Order> {
     }
 
 
-    /* Deletes all the records of an order by the order_id
+    /* Deletes all the records of an order and updates the product on_hand quantity
      *
-     * @param orderId the order_id associated to the order
-     * @return 1 to indicate success,  0 to indicate failure
+     * @param orders the order containing the list of products to delete and update
+     * @return the number of deleted rows
      * */
-    public int deleteByOrderId(String orderId) {
+    public int deleteByOrderIdAndProductId(List<Order> orders) {
         logger.info("Entering into deleteByOrderId(String orderId)");
 
-        try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
-            String sql = "DELETE FROM ORDERS WHERE order_id = ?";
+        StringBuilder sb = new StringBuilder();
+        for (Order order : orders) {
+            sb.append("UPDATE PRODUCTS SET on_hand = '")
+                    .append( Integer.parseInt(order.getProduct().getOnHand()) + Integer.parseInt(order.getQuantity()) )
+                    .append("' WHERE id = '")
+                    .append(order.getProductId())
+                    .append("'; ");
+            sb.append("DELETE FROM ORDERS WHERE order_id = '")
+                    .append(order.getOrderId())
+                    .append("' AND product_id = '")
+                    .append(order.getProductId())
+                    .append("';");
+        }
 
-            try (PreparedStatement ps = connection.prepareStatement(sql)) {
-                ps.setString(1, orderId);
-                return ps.executeUpdate();
+        try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
+
+            try (Statement ps = connection.createStatement()) {
+                return ps.executeUpdate(sb.toString());
 
             }
         } catch (SQLException e) {
@@ -206,23 +228,31 @@ public class OrderDAO implements ICrudDAO<Order> {
 
     /* Delete a product from the order that matches the order_id and product_id
      *
+     * @param newOnHandQty the updated on_hand quantity for the product being removed from the order
      * @param orderId the order_id associated to the order
      * @param productId the product_id of the product
      * @return 1 to indicate success,  0 to indicate failure
      * */
-    public int deleteProductFromOrder(String orderId, String productId) {
+    public int deleteProductFromOrder(String newOnHandQty, String orderId, String productId) {
         logger.info("Entering into deleteProductFromOrder(String orderId, String productId)");
 
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
-            String sql = "DELETE FROM ORDERS WHERE order_id = ? and product_id = ?";
+            String sql = "DELETE FROM ORDERS WHERE order_id = ? and product_id = ?; " +
+                    "UPDATE PRODUCTS SET on_hand = ? WHERE id = ?;";
 
             try (PreparedStatement ps = connection.prepareStatement(sql)) {
                 ps.setString(1, orderId);
                 ps.setString(2, productId);
+                ps.setString(3, newOnHandQty);
+                ps.setString(4, productId);
 
                 return ps.executeUpdate();
-
             }
+
+//            sql = "UPDATE PRODUCTS SET on_hand = ? WHERE id = ?";
+//            try (PreparedStatement ps = connection.prepareStatement())
+
+
         } catch (SQLException e) {
             throw new RuntimeException("Unable to connect to the database", e);
         } catch (IOException e) {

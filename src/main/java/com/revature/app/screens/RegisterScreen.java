@@ -51,8 +51,8 @@ public class RegisterScreen implements IScreen {
                     // register the user through the user service
                     clearScreen();
                     User user = userService.register(username, password);
-                    out.println("\nYou have successfully registered as: " + user.getUsername());
-                    out.println("Press any key to return the main menu and login...\n");
+                    out.println("\nYou have successfully registered as -> " + user.getUsername());
+                    out.println("Press enter to return the main menu and login\n");
                     scanner.nextLine();
                     clearScreen();
                     routerService.navigate("/home", scanner);

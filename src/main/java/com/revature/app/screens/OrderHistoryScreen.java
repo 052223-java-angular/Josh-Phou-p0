@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -121,7 +122,7 @@ public class OrderHistoryScreen implements IScreen {
 
         // Display the items in the order
         orderItems.stream()
-                .sorted((a, b) -> a.getOrderId().compareTo(b.getOrderId()))
+                .sorted(Comparator.comparing(Order::getOrderId))
                 .forEach(item -> {
                     out.format("OrderId: %s: \tProduct #: %s \tName: %s \tOrder qty: %s \tPrice \\pc: $ %s \tTotal Cost $ %s%n",
                     item.getOrderId(),
@@ -129,7 +130,7 @@ public class OrderHistoryScreen implements IScreen {
                     item.getProduct().getName(),
                     item.getQuantity(),
                     item.getProduct().getPrice(),
-                    String.valueOf(toDouble(item.getProduct().getPrice()) * toDouble(item.getQuantity())));
+                    toDouble(item.getProduct().getPrice()) * toDouble(item.getQuantity()));
         });
 
     }
@@ -142,10 +143,10 @@ public class OrderHistoryScreen implements IScreen {
     private void displayOrderTotal(List<Order> orderItems) {
         logger.info("Entering displayOrderTotal(List<Order> orderItems)");
 
-        double total = 0.00;
-        for (Order item : orderItems) {
-            total += toDouble(item.getProduct().getPrice()) * toDouble(item.getQuantity());
-        }
+        double total = orderItems.stream()
+                .mapToDouble(e -> toDouble(e.getQuantity()) * toDouble(e.getProduct().getPrice()))
+                .sum();
+
         out.format("Total spent: $ %s%n", total);
     }
 
