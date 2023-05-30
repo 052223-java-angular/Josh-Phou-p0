@@ -17,13 +17,11 @@ public class ProductDAO implements ICrudDAO<Product> {
 
     @Override
     public void save(Product product) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'save'");
     }
 
     @Override
     public void update(Product product) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 
@@ -49,7 +47,6 @@ public class ProductDAO implements ICrudDAO<Product> {
 
     @Override
     public void delete(String id) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'delete'");
     }
 
@@ -76,7 +73,7 @@ public class ProductDAO implements ICrudDAO<Product> {
                         product.setId(rs.getString("id"));
                         product.setName(rs.getString("name"));
                         product.setPrice(rs.getString("price"));
-                        product.setOnHand(rs.getInt("on_hand"));
+                        product.setOnHand(rs.getString("on_hand"));
                         product.setDepartmentId(rs.getString("departments_id"));
                         items.add(product);
                     }
@@ -120,4 +117,30 @@ public class ProductDAO implements ICrudDAO<Product> {
         }
     }
 
+    public String findByName (String name) {
+        try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
+            String sql = "SELECT * FROM products WHERE name = ?";
+
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                // Set the name parameter for the prepared statement
+                ps.setString(1,  name);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        return rs.getString("id");
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to connect to the database", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot find application.properties", e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Unable to load JDBC driver", e);
+        }
+        return "";
+    }
+
 }
+

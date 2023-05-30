@@ -40,6 +40,7 @@ public class OrderDAO implements ICrudDAO<Order> {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Unable to load JDBC driver", e);
         }
+
     }
 
 
@@ -393,13 +394,14 @@ public class OrderDAO implements ICrudDAO<Order> {
         return Optional.empty();
     }
 
-    public Optional<Order> findByUserId (String id) {
+    public Optional<Order> findByUserId (String pId, String user_id) {
         Order order = new Order();
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
-            String sql = "SELECT * FROM orders WHERE user_id = ? AND status = '0'";
+            String sql = "SELECT * FROM orders WHERE product_id = ? AND user_id = ? AND status = '0'";
 
             try (PreparedStatement ps = connection.prepareStatement(sql)) {
-                ps.setString(1, id);
+                ps.setString(1, pId);
+                ps.setString(2, user_id);
 
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
@@ -423,7 +425,6 @@ public class OrderDAO implements ICrudDAO<Order> {
         }
         return Optional.empty();
     }
-
 
     /*
      * ------------------------  Helper methods ------------------------
@@ -453,10 +454,10 @@ public class OrderDAO implements ICrudDAO<Order> {
         );
     }
 
-    // todo review with josh
+
     public boolean cartCheck(String pId, String user) {
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
-            String sql = "SELECT * FROM orders WHERE user_id = ? AND user_id = ? AND status = '0'";
+            String sql = "SELECT * FROM orders WHERE product_id = ? AND user_id = ? AND status = '0'";
 
             try (PreparedStatement ps = connection.prepareStatement(sql)) {
                 ps.setString(1, pId);
@@ -480,7 +481,6 @@ public class OrderDAO implements ICrudDAO<Order> {
         return false;
     }
 
-    // todo - this should be in products service / dao
     public void updateOnHand (String productId, String orderId, String userId, int quantity) {
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
             String sql = "UPDATE products SET on_hand = ? WHERE id = ? AND user_id = ? AND status = '0'";
@@ -501,4 +501,6 @@ public class OrderDAO implements ICrudDAO<Order> {
             throw new RuntimeException("Unable to load JDBC driver", e);
         }
     }
+
+
 }

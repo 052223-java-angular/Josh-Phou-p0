@@ -38,7 +38,7 @@ public class StoreFront implements IScreen {
 
             switch (input.toLowerCase()){
                 case "1":
-                    router.navigate("/product", scanner);
+                    router.navigate("/products", scanner);
                     break;
                 case "2":
                     router.navigate("/orders", scanner);
@@ -62,37 +62,10 @@ public class StoreFront implements IScreen {
                     scanner.nextLine();
                     continue;
 
-//                System.out.print("\nEnter: ");
-//                input = scanner.nextLine();
-//
-//                switch (input.toLowerCase()){
-//                    case "1":
-//                        router.navigate("/products", scanner);
-//                        break;
-//                    case"2":
-//                        router.navigate("/cart", scanner);
-//                        break;
-//                    case "3":
-//                        router.navigate("/orders", scanner);
-//                        break;
-//                    case "4":
-//                        router.navigate("/review", scanner);
-//                        break;
-//                    case "5":
-//                        // todo remove, temporary route option
-//                        router.navigate("/checkout", scanner);
-//                        break;
-//                    case "x":
-//                        break exit;
-//                    default:
-//                        clearScreen();
-//                        System.out.println("Invalid option selected");
-//                        System.out.print("Press enter to continue...");
-//                        scanner.nextLine();
-//                        break;
                 }
             break;
         }
+
     }
 
     /* ------------------------ Helper methods ------------------------------*/

@@ -42,3 +42,5 @@ INSERT INTO ORDERS (id, order_id, status, quantity, user_id, product_id) VALUES 
 
 INSERT INTO reviews (id, comment, rating, user_id, product_id) VALUES ('105e41c3-7cc5-4989-6832-8a564c09fc15', 'aaaaahhhhhh', '1', '9eb7470a-8ce2-4a00-ac22-909cd4a95cc6', '93657de5-f2e3-404e-9e80-5f4cb454c5fd');
 
+=======
+>>>>>>> 60f66f77cc0cbbe21ad5ae221ea770bbac01e587
