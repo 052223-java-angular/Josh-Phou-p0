@@ -44,21 +44,16 @@ public class ProductScreen implements IScreen {
                     List<Product> items = getProducts(input);
                     //display list and select
                     clearScreen();
-                    String index = displayProducts(items, scanner);
-                    String pId = getProductId(items.get(i).getName());
-                    System.out.println(pId);
-                    System.out.println("get quantity");
+                    String index = getIndex(items, scanner);
+                    String pId = getPId(items, index);
                     quantity = getQuantity(items, index, scanner);
-                    System.out.println(quantity);
                     //check if there is a cart fetch/yes create/no
-                    System.out.println("order");
                     Order order = getOrder(pId);
-                    System.out.println(order);
                     //check if item is in cart
                     boolean check = productInCart(pId);
                     //in cart/update quantity not/create entry
                     if (check) {
-                        quantityUpdate(pId, order.getOrderId(), quantity);
+                        quantityUpdate(pId, quantity);
                     }else {
                         order.setId(createOrderUUID());
                         order.setStatus("0");
@@ -126,7 +121,7 @@ public class ProductScreen implements IScreen {
         return this.productService.getId(name);
     }
 
-    public String displayProducts(List<Product> items, Scanner scanner) {
+    public String getIndex(List<Product> items, Scanner scanner) {
         while (true) {
             clearScreen();
             System.out.println("Select a product:\n");
@@ -142,17 +137,21 @@ public class ProductScreen implements IScreen {
                 String input = scanner.nextLine();
                 switch (input.toLowerCase()) {
                     case "1", "2", "3", "4":
-                        int i = Integer.parseInt(input) - 1;
-                        return items.get(i).getId();
+                        return input;
                     default:
                         clearScreen();
-                        System.out.println("Invalid option selected------display");
+                        System.out.println("Invalid option selected");
                         System.out.print("Press enter to continue...");
                         scanner.nextLine();
-                    break;
+                        break;
                 }
             }
         }
+    }
+
+    public String getPId(List<Product> items, String i) {
+           int index = Integer.parseInt(i) - 1 ;
+           return items.get(index).getId();
     }
 
     public int getQuantity (List<Product> items, String input, Scanner scanner) {
@@ -161,7 +160,6 @@ public class ProductScreen implements IScreen {
             switch (input) {
                 case "1", "2", "3", "4":
                     int num = Integer.parseInt(input) - 1;
-                    System.out.println(input);
                     System.out.println(items.get(num).getName() + " for " + items.get(num).getPrice());
                     System.out.println("\nAmount to purchase: ");
 
@@ -179,7 +177,7 @@ public class ProductScreen implements IScreen {
 
                 default:
                     clearScreen();
-                    System.out.println("Invalid option selected-------default quantity");
+                    System.out.println("Invalid option selected");
                     System.out.print("Press enter to continue...");
                     scanner.nextLine();
                     break;
@@ -201,7 +199,9 @@ public class ProductScreen implements IScreen {
     }
 
     public boolean productInCart (String pId) {
-        boolean check = this.productService.inCartCheck(session.getId(), pId);
+        boolean check;
+        check = this.productService.inCartCheck(pId, session.getId());
+
         if(check) {
             return true;
         }
@@ -213,8 +213,9 @@ public class ProductScreen implements IScreen {
         return uuid;
     }
 
-    public void quantityUpdate (String productId, String orderId, int quantity) {
-        productService.updateOnHand(productId,orderId,session.getId(),quantity);
+    public void quantityUpdate (String productId, int quantity) {
+        String quant = String.valueOf(quantity);
+        productService.updateOnHand(productId,session.getId(),quant);
     }
 
     public void addToOrder (Order order) {

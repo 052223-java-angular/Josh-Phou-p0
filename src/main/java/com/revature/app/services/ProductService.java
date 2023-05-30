@@ -20,7 +20,7 @@ public class ProductService {
         return this.productDAO.findByCategory(name);
     }
 
-    public void updateOnHand (String productId, String user_id, String orderId, int quantity) { this.orderDAO.updateOnHand(productId, orderId, user_id, quantity); }
+    public void updateOnHand (String productId, String user_id, String quantity) { this.orderDAO.updateOnHand(productId, user_id, quantity); }
 
     public void addToOrder (Order order){ this.orderDAO.save(order); }
 
