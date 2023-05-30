@@ -12,6 +12,9 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.UUID;
 
+import static com.revature.app.utils.FormatUtil.intToStr;
+import static com.revature.app.utils.FormatUtil.toInt;
+
 @AllArgsConstructor
 public class PurchaseScreen implements IScreen {
     private final ProductService productService;
@@ -71,9 +74,9 @@ public class PurchaseScreen implements IScreen {
                         }
 
                         //check if sufficient on hand
-                        if (choice <= items.get(num).getOnHand() && choice > 0){
-                            int remains = items.get(num).getOnHand() - choice;
-                            items.get(num).setOnHand(remains);
+                        if (choice <= toInt(items.get(num).getOnHand()) && choice > 0){
+                            int remains = toInt(items.get(num).getOnHand()) - choice;
+                            items.get(num).setOnHand(intToStr(remains));
 
                             //check if already in cart
                             boolean inCart = isInCart(items.get(num).getId());
@@ -139,12 +142,12 @@ public class PurchaseScreen implements IScreen {
     }
 
     public void onHandUpdater(List<Product> items, int i, String ordered) {
-        int onHand = items.get(i).getOnHand();
-        int inOrder = Integer.parseInt(ordered);
+        int onHand = toInt(items.get(i).getOnHand());
+        int inOrder = toInt(ordered);
 
         onHand -= inOrder;
 
-        items.get(i).setOnHand(onHand);
+        items.get(i).setOnHand(intToStr(onHand));
     }
 
     public void addToOrder (Order order) {

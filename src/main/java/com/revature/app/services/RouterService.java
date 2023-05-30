@@ -39,7 +39,9 @@ public class RouterService {
                 break;
             case "/products":
                 logger.info("Instantiating ProductScreen and injecting in RouterService");
-                new ProductScreen(this, session).start(scanner);
+//                new ProductScreen(this, session).start(scanner);
+                // todo review with josh
+                new ProductScreen(getProductService(), getDepartmentService(),this, session).start(scanner);
                 break;
             case "/cart":
                 break;
@@ -59,10 +61,10 @@ public class RouterService {
         }
     }
 
-    public void productNavigate (Scanner scanner, String input)
-    {
-        new PurchaseScreen(getProductService(),this, session, input).start(scanner);
-    }
+//    public void productNavigate (Scanner scanner, String input)
+//    {
+//        new PurchaseScreen(getProductService(),this, session, input).start(scanner);
+//    }
 
     /*
      * ------------------------  Dependency injection helper methods ------------------------
@@ -83,4 +85,10 @@ public class RouterService {
     private ProductService getProductService() { return new ProductService(new ProductDAO(), new OrderDAO()); }
 
     private ReviewService getReviewService() { return new ReviewService(new ReviewDAO()); }
+
+    // todo review
+    private DepartmentService getDepartmentService() {
+        return new DepartmentService(new DepartmentDAO());
+    }
+
 }

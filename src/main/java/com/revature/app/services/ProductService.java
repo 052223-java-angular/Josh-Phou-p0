@@ -7,7 +7,7 @@ import com.revature.app.models.Product;
 import lombok.AllArgsConstructor;
 
 
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +15,16 @@ import java.util.Optional;
 public class ProductService {
     private final ProductDAO productDAO;
     private final OrderDAO orderDAO;
+
+    // todo review with josh
+    public List<Product> findByDepartmentId(String departmentId) {
+        Optional<List<Product>> productsOpt = productDAO.findByDepartmentId(departmentId);
+
+        if (productsOpt.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return productsOpt.get();
+    }
 
     public List<Product> findByCategory(String name) {
         return this.productDAO.findByCategory(name);

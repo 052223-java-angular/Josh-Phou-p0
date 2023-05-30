@@ -12,6 +12,9 @@ public class FormatUtil {
      * */
     public static int toInt(String value) {
         try {
+            if (value == null) {
+                return 0;
+            }
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
             out.println(e.getLocalizedMessage());

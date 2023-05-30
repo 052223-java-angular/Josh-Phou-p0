@@ -38,7 +38,7 @@ public class StoreFront implements IScreen {
 
             switch (input.toLowerCase()){
                 case "1":
-                    router.navigate("/product", scanner);
+                    router.navigate("/products", scanner);
                     break;
                 case "2":
                     router.navigate("/orders", scanner);

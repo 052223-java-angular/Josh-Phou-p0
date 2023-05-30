@@ -59,6 +59,47 @@ public class ProductDAO implements ICrudDAO<Product> {
         throw new UnsupportedOperationException("Unimplemented method 'findById'");
     }
 
+    // todo review
+    public Optional<List<Product>> findByDepartmentId(String departmentId) {
+
+        try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
+            String sql = "SELECT * FROM PRODUCTS WHERE departments_id = ?";
+
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                // Set the name parameter for the prepared statement
+                ps.setString(1,  departmentId);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    List<Product> products = new ArrayList<>();
+                    while (rs.next()) {
+                        // Create a new product object and populate it with data from the result set
+                        Product product = new Product();
+                        product.setId(rs.getString("id"));
+                        product.setName(rs.getString("name"));
+                        product.setPrice(rs.getString("price"));
+
+                        // todo modified
+//                        product.setOnHand(rs.getInt("on_hand"));
+                        product.setOnHand(rs.getString("on_hand"));
+                        product.setDepartmentId(rs.getString("departments_id"));
+                        products.add(product);
+                    }
+                    return Optional.of(products);
+                }
+
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to connect to the database", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot find application.properties", e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Unable to load JDBC driver", e);
+        }
+
+    }
+
+
     public List<Product> findByCategory(String name) {
        List<Product> items = new ArrayList<>();
 
@@ -76,7 +117,10 @@ public class ProductDAO implements ICrudDAO<Product> {
                         product.setId(rs.getString("id"));
                         product.setName(rs.getString("name"));
                         product.setPrice(rs.getString("price"));
-                        product.setOnHand(rs.getInt("on_hand"));
+
+                        // todo modified
+//                        product.setOnHand(rs.getInt("on_hand"));
+                        product.setOnHand(rs.getString("on_hand"));
                         product.setDepartmentId(rs.getString("departments_id"));
                         items.add(product);
                     }
