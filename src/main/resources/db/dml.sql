@@ -36,8 +36,11 @@ INSERT INTO ORDERS (id, order_id, status, quantity, user_id, product_id) VALUES 
 INSERT INTO ORDERS (id, order_id, status, quantity, user_id, product_id) VALUES ('649c56a9-7935-4036-be1e-687c3aa36871', 'f01960f5-84d9-4710-9e2c-2cec81fca136', '0', '1', '8a05c484-e1a8-426b-bd35-2dfd28861efb', 'f1239cd0-e770-4415-b618-abe73d83bfcd');
 INSERT INTO ORDERS (id, order_id, status, quantity, user_id, product_id) VALUES ('105e51c3-7cc5-4989-ab62-8a564c09fc15', 'f01960f5-84d9-4710-9e2c-2cec81fca136', '0', '1', '8a05c484-e1a8-426b-bd35-2dfd28861efb', 'd1ab42b2-1d96-4bf0-b116-5ace24bfcc25');
 
-
 INSERT INTO ORDERS (id, order_id, status, quantity, user_id, product_id) VALUES ('c7466de0-f7da-4c05-978e-f38a734b0c49', '639b6c01-87ca-4224-80ad-e6133b1f5d5e', '2', '5', '8a05c484-e1a8-426b-bd35-2dfd28861efb', '93657de5-f2e3-404e-9e80-5f4cb454c5fd');
 INSERT INTO ORDERS (id, order_id, status, quantity, user_id, product_id) VALUES ('06783f64-8ecb-43ed-bfba-6068ce9b47ce', '639b6c01-87ca-4224-80ad-e6133b1f5d5e', '2', '5', '8a05c484-e1a8-426b-bd35-2dfd28861efb', 'f1239cd0-e770-4415-b618-abe73d83bfcd');
 INSERT INTO ORDERS (id, order_id, status, quantity, user_id, product_id) VALUES ('9f705ac3-2156-40dd-a196-6f8090461a9a', '639b6c01-87ca-4224-80ad-e6133b1f5d5e', '2', '5', '8a05c484-e1a8-426b-bd35-2dfd28861efb', 'd1ab42b2-1d96-4bf0-b116-5ace24bfcc25');
 
+INSERT INTO reviews (id, comment, rating, user_id, product_id) VALUES ('105e41c3-7cc5-4989-6832-8a564c09fc15', 'aaaaahhhhhh', '1', '9eb7470a-8ce2-4a00-ac22-909cd4a95cc6', '93657de5-f2e3-404e-9e80-5f4cb454c5fd');
+
+=======
+>>>>>>> 60f66f77cc0cbbe21ad5ae221ea770bbac01e587

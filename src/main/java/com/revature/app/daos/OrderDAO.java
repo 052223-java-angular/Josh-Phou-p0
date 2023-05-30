@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
 public class OrderDAO implements ICrudDAO<Order> {
 
     private static final Logger logger = LogManager.getLogger(OrderDAO.class);
@@ -48,6 +49,7 @@ public class OrderDAO implements ICrudDAO<Order> {
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 
+
     /* Updates the product order quantity matching the order_id and product_id
     * */
     public void updateQuantity(String quantity, String orderId, String productId) {
@@ -74,7 +76,6 @@ public class OrderDAO implements ICrudDAO<Order> {
 
     /* Deletes an Order record by the tables id
     * */
-
     @Override
     public List<Order> findAll() {
         throw new UnsupportedOperationException("Unimplemented method 'findAll'");
@@ -245,7 +246,7 @@ public class OrderDAO implements ICrudDAO<Order> {
         StringBuilder sb = new StringBuilder();
         for (Order order : orders) {
             sb.append("UPDATE PRODUCTS SET on_hand = '")
-                    .append( order.getProduct().getOnHand() + Integer.parseInt(order.getQuantity()) )
+                    .append( order.getProduct().getOnHand() + order.getQuantity() )
                     .append("' WHERE id = '")
                     .append(order.getProductId())
                     .append("'; ");
@@ -329,7 +330,6 @@ public class OrderDAO implements ICrudDAO<Order> {
 
             try (PreparedStatement ps = connection.prepareStatement(sql)) {
                 ps.setString(1, userId);
-//                ps.setString(2, status);
 
                 try (ResultSet rs = ps.executeQuery()) {
                     List<Order> orderItemList = new ArrayList<>();
@@ -403,7 +403,6 @@ public class OrderDAO implements ICrudDAO<Order> {
                 ps.setString(1, pId);
                 ps.setString(2, user_id);
 
-
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         order.setId(rs.getString("id"));
@@ -426,6 +425,35 @@ public class OrderDAO implements ICrudDAO<Order> {
         }
         return Optional.empty();
     }
+
+    /*
+     * ------------------------  Helper methods ------------------------
+     */
+
+
+    /* Sets the fields of the Product and Order instance using the data from the ResultSet
+    * */
+    private Order buildOrderInstance(ResultSet rs) throws SQLException {
+        logger.info("Entering into buildOrderInstance(ResultSet rs)");
+
+        Product product = new Product(
+                rs.getString("product_id"),
+                rs.getString("product_name"),
+                rs.getString("price"),
+                rs.getString("on_hand"),
+                rs.getString("departments_id")
+        );
+        return new Order(
+                rs.getString("id"),
+                rs.getString("status"),
+                rs.getString("quantity"),
+                rs.getString("user_id"),
+                rs.getString("product_id"),
+                rs.getString("order_id"),
+                product
+        );
+    }
+
 
     public boolean cartCheck(String pId, String user) {
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
@@ -473,36 +501,6 @@ public class OrderDAO implements ICrudDAO<Order> {
             throw new RuntimeException("Unable to load JDBC driver", e);
         }
     }
-
-    /*
-     * ------------------------  Helper methods ------------------------
-     */
-
-
-    /* Sets the fields of the Product and Order instance using the data from the ResultSet
-    * */
-    private Order buildOrderInstance(ResultSet rs) throws SQLException {
-        logger.info("Entering into buildOrderInstance(ResultSet rs)");
-
-        Product product = new Product(
-                rs.getString("product_id"),
-                rs.getString("product_name"),
-                rs.getString("price"),
-                rs.getString("on_hand"),
-                rs.getString("departments_id")
-        );
-        return new Order(
-                rs.getString("id"),
-                rs.getString("status"),
-                rs.getString("quantity"),
-                rs.getString("user_id"),
-                rs.getString("product_id"),
-                rs.getString("order_id"),
-                product
-        );
-    }
-
-
 
 
 }

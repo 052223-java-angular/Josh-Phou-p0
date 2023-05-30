@@ -12,7 +12,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
+import static com.revature.app.utils.FormatUtil.toDouble;
 import static java.lang.System.out;
+
+// todo merhe
 
 @AllArgsConstructor
 public class OrderHistoryScreen implements IScreen {
@@ -148,23 +151,6 @@ public class OrderHistoryScreen implements IScreen {
                 .sum();
 
         out.format("Total spent: $ %s%n", total);
-    }
-
-    /* Converts String value to double
-     * */
-    private Double toDouble(String value) {
-        try {
-            return Double.parseDouble(value);
-        } catch (NumberFormatException e) {
-            out.println(e.getLocalizedMessage());
-        }
-        return 0.00;
-    }
-
-    /* Converts String value to int
-     * */
-    private int toInt(String value) throws NumberFormatException {
-        return Integer.parseInt(value);
     }
 
 

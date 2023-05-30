@@ -41,6 +41,8 @@ public class RouterService {
                 logger.info("Instantiating ProductScreen and injecting in RouterService");
                 new ProductScreen(getProductService(), this, session).start(scanner);
                 break;
+            case "/cart":
+                break;
             case "/orders":
                 logger.info("Instantiating OrderHistoryScreen and injecting in OrderService, RouterService and session");
                 new OrderHistoryScreen(getOrderService(), this, session).start(scanner);
@@ -59,11 +61,11 @@ public class RouterService {
         }
     }
 
-    //public void productNavigate (Scanner scanner, String input)
-    //{
-    //    logger.info("Instantiating PurchaseScreen and injecting in ProductService, RouterService, session, and category input");
-     //   new PurchaseScreen(getProductService(),this, session, input).start(scanner);
-   // }
+//    public void productNavigate (Scanner scanner, String input)
+//    {
+//        logger.info("Instantiating PurchaseScreen and injecting in ProductService, RouterService, session, and category input");
+//        new PurchaseScreen(getProductService(),this, session, input).start(scanner);
+//    }
 
     /*
      * ------------------------  Dependency injection helper methods ------------------------
