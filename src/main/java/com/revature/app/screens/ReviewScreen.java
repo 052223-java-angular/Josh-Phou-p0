@@ -57,7 +57,7 @@ public class ReviewScreen implements IScreen {
                             try {
                                 rating = scanner.nextInt();
                             } catch (Exception e) {
-                                System.out.println("Invalid entry please enter a rating between 1 and 5");
+                                System.out.println("Invalid entry");
                                 break rating;
                             }
                             if (rating >= 1 && rating <= 5) {
@@ -67,7 +67,9 @@ public class ReviewScreen implements IScreen {
                             }else {
                                 System.out.println("Invalid entry");
                                 break rating;
-                            }
+                        }
+                        }else {
+                            System.out.println("You have not purchased this product yet.");
                         }
                         break;
                     case "3":
@@ -123,10 +125,11 @@ public class ReviewScreen implements IScreen {
 
         for(int i = 0; i <reviews.size(); i++){
             System.out.println(pName
-                    + " rating: "
+                    + "\nrating: "
                     + reviews.get(i).getRating()
-                    + " Comment: "
+                    + "\nComment: "
                     + reviews.get(i).getComment());
+            System.out.println("\n");
         }
 
         System.out.println("\n------------------------------------------");
