@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 
+import static com.revature.app.utils.FormatUtil.*;
+
+
 @AllArgsConstructor
 public class OrderService {
     private static final Logger logger = LogManager.getLogger(OrderService.class);
@@ -146,14 +149,5 @@ public class OrderService {
         }
     }
 
-
-    /* Convert a String to Integer
-    *
-    * @param value the string to convert
-    * @return an int
-    * */
-    private int toInt(String value) throws NumberFormatException {
-        return Integer.parseInt(value);
-    }
 
 }

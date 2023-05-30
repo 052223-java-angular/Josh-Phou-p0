@@ -39,7 +39,7 @@ public class UserDAO implements ICrudDAO<User> {
     }
 
     @Override
-    public void update(String id) {
+    public void update(User user) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }

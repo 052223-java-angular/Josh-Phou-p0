@@ -1,5 +1,6 @@
 package com.revature.app.screens;
 
+import com.revature.app.models.Session;
 import com.revature.app.services.RouterService;
 import lombok.*;
 
@@ -8,6 +9,7 @@ import java.util.Scanner;
 @AllArgsConstructor
 public class ProductScreen implements IScreen {
     private final RouterService router;
+    private Session session;
 
     @Override
     public void start(Scanner scanner) {
@@ -17,10 +19,10 @@ public class ProductScreen implements IScreen {
         while (true) {
             clearScreen();
             System.out.println("Welcome to the product catalog\n");
-            System.out.println("[1] Product category 1");
-            System.out.println("[2] Product category 2");
-            System.out.println("[3] Product category 3");
-            System.out.println("[4] Product category 4");
+            System.out.println("[1] Product categoryA");
+            System.out.println("[2] Product categoryB");
+            System.out.println("[3] Product categoryC");
+            System.out.println("[4] Product categoryD");
             System.out.println("[x] Return to menu");
 
             System.out.print("\nEnter: ");
@@ -28,16 +30,16 @@ public class ProductScreen implements IScreen {
 
             switch (input.toLowerCase()) {
                 case "1":
-                    router.navigate("/product1", scanner);
+                    router.productNavigate(scanner, "CategoryA");
                     break;
                 case"2":
-                    router.navigate("/product2", scanner);
+                    router.productNavigate( scanner, "CategoryB");
                     break;
                 case "3":
-                    router.navigate("/product3", scanner);
+                    router.productNavigate(scanner, "CategoryC");
                     break;
                 case "4":
-                    router.navigate("/product4", scanner);
+                    router.productNavigate(scanner, "CategoryD");
                     break;
                 case "x":
                     router.navigate("/browse", scanner);

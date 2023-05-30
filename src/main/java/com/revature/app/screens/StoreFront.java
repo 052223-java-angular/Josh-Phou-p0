@@ -32,6 +32,7 @@ public class StoreFront implements IScreen {
             out.println("[x] Press x to logout and return to the login / register screen");
             out.println("[q] Logout and exit");
 
+
             out.print("\nEnter: ");
             input = scanner.nextLine();
 
@@ -60,7 +61,36 @@ public class StoreFront implements IScreen {
                     out.print("Press enter to continue...");
                     scanner.nextLine();
                     continue;
-            }
+
+//                System.out.print("\nEnter: ");
+//                input = scanner.nextLine();
+//
+//                switch (input.toLowerCase()){
+//                    case "1":
+//                        router.navigate("/products", scanner);
+//                        break;
+//                    case"2":
+//                        router.navigate("/cart", scanner);
+//                        break;
+//                    case "3":
+//                        router.navigate("/orders", scanner);
+//                        break;
+//                    case "4":
+//                        router.navigate("/review", scanner);
+//                        break;
+//                    case "5":
+//                        // todo remove, temporary route option
+//                        router.navigate("/checkout", scanner);
+//                        break;
+//                    case "x":
+//                        break exit;
+//                    default:
+//                        clearScreen();
+//                        System.out.println("Invalid option selected");
+//                        System.out.print("Press enter to continue...");
+//                        scanner.nextLine();
+//                        break;
+                }
             break;
         }
     }
