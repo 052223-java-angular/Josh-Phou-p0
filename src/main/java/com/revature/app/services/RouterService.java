@@ -40,7 +40,6 @@ public class RouterService {
                 new StoreFront(this, session).start(scanner);
                 break;
             case "/products":
-                // todo inject the session object
                 logger.info("Instantiating ProductScreen and injecting in RouterService");
                 new ProductScreen(this).start(scanner);
                 break;

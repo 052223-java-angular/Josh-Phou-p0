@@ -12,7 +12,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static java.lang.System.out;
 
@@ -229,7 +228,7 @@ public class CheckoutScreen implements IScreen {
         // when selected option is not "x" and less than products in orderItems
         if (!opt.equalsIgnoreCase("x")) {
             // remove the product from the order
-            int result = orderService.deleteOrder(orderItems.get(0).getOrderId());
+            int result = orderService.deleteOrderUpdateOnHand(orderItems);
             if (result == 0) {
                 out.format("%nUnable to delete the order having order_id %s because it was not found.",
                         orderItems.get(0).getOrderId());

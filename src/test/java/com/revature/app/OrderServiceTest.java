@@ -33,6 +33,7 @@ public class OrderServiceTest {
         orderService = new OrderService(orderDAO);
     }
 
+
     @Test
     public void testFindOrderByUserId_WhenOrdersExist() {
         String userId = "123";
@@ -48,6 +49,7 @@ public class OrderServiceTest {
         verify(orderDAO, times(1)).findOrderByUserId(userId);
     }
 
+
     @Test
     public void testFindOrderByUserId_WhenNoOrdersExist() {
         String userId = "123";
@@ -59,46 +61,90 @@ public class OrderServiceTest {
         verify(orderDAO, times(1)).findOrderByUserId(userId);
     }
 
+
     @Test
-    public void testUpdateProductOrderQuantity_WhenOrderExistsAndIncreaseIsTrue() {
+    public void testUpdateProductOrderQuantity_WhenOrderAndProductExist_AndIncrease_WithSufficientInventory() {
         String orderId = "123";
         String productId = "456";
         Order order = new Order();
-        order.setQuantity("5");
-        order.setProduct(new Product("456", "Test Product", "19.99", "10", "789"));
-
+        order.setQuantity("2");
+        Product product = new Product();
+        product.setOnHand("5");
+        order.setProduct(product);
         when(orderDAO.findOrderByProductAndOrderId(orderId, productId)).thenReturn(Optional.of(order));
-        when(orderDAO.updateQuantity(anyString(), anyString(), anyString(), anyString())).thenReturn(1);
+        when(orderDAO.updateQuantity("3", "4", orderId, productId)).thenReturn(1);
 
         int result = orderService.updateProductOrderQuantity(true, orderId, productId);
 
         assertEquals(1, result);
         verify(orderDAO, times(1)).findOrderByProductAndOrderId(orderId, productId);
-        verify(orderDAO, times(1)).updateQuantity("6", "9", orderId, productId);
+        verify(orderDAO, times(1)).updateQuantity("3", "4", orderId, productId);
     }
 
+
     @Test
-    public void testUpdateProductOrderQuantity_WhenOrderExistsAndIncreaseIsFalse() {
+    public void testUpdateProductOrderQuantity_WhenOrderAndProductExist_AndDecrease_WithSufficientInventory() {
+        String orderId = "123";
+        String productId = "456";
+        Order order = new Order();
+        order.setQuantity("2");
+        Product product = new Product();
+        product.setOnHand("5");
+        order.setProduct(product);
+        when(orderDAO.findOrderByProductAndOrderId(orderId, productId)).thenReturn(Optional.of(order));
+        when(orderDAO.updateQuantity("1", "6", orderId, productId)).thenReturn(1);
+
+        int result = orderService.updateProductOrderQuantity(false, orderId, productId);
+
+        assertEquals(1, result);
+        verify(orderDAO, times(1)).findOrderByProductAndOrderId(orderId, productId);
+        verify(orderDAO, times(1)).updateQuantity("1", "6", orderId, productId);
+    }
+
+
+    @Test
+    public void testUpdateProductOrderQuantity_WhenOrderAndProductExist_AndIncrease_WithInsufficientInventory() {
         String orderId = "123";
         String productId = "456";
         Order order = new Order();
         order.setQuantity("5");
-        order.setProduct(new Product("456", "Test Product", "19.99", "10", "789"));
-
+        Product product = new Product();
+        product.setOnHand("3");
+        order.setProduct(product);
         when(orderDAO.findOrderByProductAndOrderId(orderId, productId)).thenReturn(Optional.of(order));
-        when(orderDAO.updateQuantity(anyString(), anyString(), anyString(), anyString())).thenReturn(0);
 
-        int result = orderService.updateProductOrderQuantity(false, orderId, productId);
+        int result = orderService.updateProductOrderQuantity(true, orderId, productId);
 
         assertEquals(0, result);
         verify(orderDAO, times(1)).findOrderByProductAndOrderId(orderId, productId);
+        verify(orderDAO, never()).updateQuantity(anyString(), anyString(), anyString(), anyString());
     }
 
+
     @Test
-    public void testUpdateProductOrderQuantity_WhenOrderDoesNotExist() {
+    public void testUpdateProductOrderQuantity_WhenOrderAndProductExist_AndDecrease_ToZero_WithSufficientInventory() {
         String orderId = "123";
         String productId = "456";
+        Order order = new Order();
+        order.setQuantity("1");
+        Product product = new Product();
+        product.setOnHand("5");
+        order.setProduct(product);
+        when(orderDAO.findOrderByProductAndOrderId(orderId, productId)).thenReturn(Optional.of(order));
+        when(orderDAO.deleteProductFromOrder("6", orderId, productId)).thenReturn(1);
 
+        int result = orderService.updateProductOrderQuantity(false, orderId, productId);
+
+        assertEquals(1, result);
+        verify(orderDAO, times(1)).findOrderByProductAndOrderId(orderId, productId);
+        verify(orderDAO, times(1)).deleteProductFromOrder("6", orderId, productId);
+    }
+
+
+    @Test
+    public void testUpdateProductOrderQuantity_WhenOrderOrProductDoesNotExist() {
+        String orderId = "123";
+        String productId = "456";
         when(orderDAO.findOrderByProductAndOrderId(orderId, productId)).thenReturn(Optional.empty());
 
         int result = orderService.updateProductOrderQuantity(true, orderId, productId);
@@ -106,97 +152,58 @@ public class OrderServiceTest {
         assertEquals(0, result);
         verify(orderDAO, times(1)).findOrderByProductAndOrderId(orderId, productId);
         verify(orderDAO, never()).updateQuantity(anyString(), anyString(), anyString(), anyString());
-        verify(orderDAO, never()).deleteProductFromOrder(anyString(), anyString());
     }
 
-    @Test
-    public void testUpdateProductOrderQuantity_WhenNewQuantityIsZero() {
-        String orderId = "123";
-        String productId = "456";
-        Order order = new Order();
-        order.setQuantity("1");
-        order.setProduct(new Product("456", "Test Product", "19.99", "10", "789"));
-
-        when(orderDAO.findOrderByProductAndOrderId(orderId, productId)).thenReturn(Optional.of(order));
-        when(orderDAO.deleteProductFromOrder(orderId, productId)).thenReturn(1);
-
-        int result = orderService.updateProductOrderQuantity(false, orderId, productId);
-
-        assertEquals(1, result);
-        verify(orderDAO, times(1)).findOrderByProductAndOrderId(orderId, productId);
-        verify(orderDAO, never()).updateQuantity(anyString(), anyString(), anyString(), anyString());
-        verify(orderDAO, times(1)).deleteProductFromOrder(orderId, productId);
-    }
-
-    @Test
-    public void testUpdateProductOrderQuantity_WhenOnHandIsTooLow() {
-        String orderId = "123";
-        String productId = "456";
-        Order order = new Order();
-        order.setQuantity("1");
-        order.setProduct(new Product("456", "Test Product", "19.99", "0", "789"));
-
-        when(orderDAO.findOrderByProductAndOrderId(orderId, productId)).thenReturn(Optional.of(order));
-
-        int result = orderService.updateProductOrderQuantity(true, orderId, productId);
-
-        assertEquals(0, result);
-        verify(orderDAO, times(1)).findOrderByProductAndOrderId(orderId, productId);
-        verify(orderDAO, never()).updateQuantity(anyString(), anyString(), anyString(), anyString());
-        verify(orderDAO, never()).deleteProductFromOrder(anyString(), anyString());
-    }
-
-    @Test
-    public void testRemoveProductFromOrder_WhenOrderAndProductExist() {
-        String orderId = "123";
-        String productId = "456";
-        Order order = new Order();
-
-        when(orderDAO.findOrderByProductAndOrderId(orderId, productId)).thenReturn(Optional.of(order));
-        when(orderDAO.deleteProductFromOrder(orderId, productId)).thenReturn(1);
-
-        int result = orderService.removeProductFromOrder(orderId, productId);
-
-        assertEquals(1, result);
-        verify(orderDAO, times(1)).findOrderByProductAndOrderId(orderId, productId);
-        verify(orderDAO, times(1)).deleteProductFromOrder(orderId, productId);
-    }
 
     @Test
     public void testRemoveProductFromOrder_WhenOrderOrProductDoesNotExist() {
         String orderId = "123";
         String productId = "456";
-
         when(orderDAO.findOrderByProductAndOrderId(orderId, productId)).thenReturn(Optional.empty());
 
         int result = orderService.removeProductFromOrder(orderId, productId);
 
         assertEquals(0, result);
         verify(orderDAO, times(1)).findOrderByProductAndOrderId(orderId, productId);
-        verify(orderDAO, never()).deleteProductFromOrder(orderId, productId);
+        verify(orderDAO, never()).deleteProductFromOrder(anyString(), anyString(), anyString());
     }
 
+
     @Test
-    public void testDeleteOrder_WhenOrderExists() {
+    public void testDeleteOrderUpdateOnHand_WhenOrdersExist() {
         String orderId = "123";
-        when(orderDAO.deleteByOrderId(orderId)).thenReturn(1);
+        String productId1 = "456";
+        String productId2 = "789";
+        Product product1 = new Product();
+        Product product2 = new Product();
+        product1.setId(productId1);
+        product2.setId(productId2);
+        product1.setOnHand("8");
+        product2.setOnHand("9");
+        Order order1 = new Order("789", "2", "1", "111", productId1, orderId, product1);
+        Order order2 = new Order("7891", "2", "1", "111", productId2, orderId, product2);
+        List<Order> orders = new ArrayList<>();
+        orders.add(order1);
+        orders.add(order2);
+        when(orderDAO.deleteByOrderIdAndProductId(orders)).thenReturn(2);
 
-        int result = orderService.deleteOrder(orderId);
+        int result = orderService.deleteOrderUpdateOnHand(orders);
 
-        assertEquals(1, result);
-        verify(orderDAO, times(1)).deleteByOrderId(orderId);
+        assertEquals(2, result);
+        verify(orderDAO, times(1)).deleteByOrderIdAndProductId(orders);
     }
 
-    @Test
-    public void testDeleteOrder_WhenOrderDoesNotExist() {
-        String orderId = "123";
-        when(orderDAO.deleteByOrderId(orderId)).thenReturn(0);
 
-        int result = orderService.deleteOrder(orderId);
+    @Test
+    public void testDeleteOrderUpdateOnHand_WhenNoOrdersExist() {
+        List<Order> orders = new ArrayList<>();
+
+        int result = orderService.deleteOrderUpdateOnHand(orders);
 
         assertEquals(0, result);
-        verify(orderDAO, times(1)).deleteByOrderId(orderId);
+        verify(orderDAO, never()).deleteByOrderIdAndProductId(anyList());
     }
+
 
     @Test
     public void testCheckout_WhenOrdersExist() {
@@ -220,6 +227,7 @@ public class OrderServiceTest {
         verify(orderDAO, times(1)).updateOrderStatus("2", orderId, productId1, "7");
         verify(orderDAO, times(1)).updateOrderStatus("2", orderId, productId2, "8");
     }
+
 
     @Test
     public void testCheckout_WhenNoOrdersExist() {

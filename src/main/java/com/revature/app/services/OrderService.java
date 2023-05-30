@@ -23,6 +23,7 @@ public class OrderService {
         PENDING, SHIPPING, COMPLETE
     }
 
+
     /* Find orders by the given userId
      *
      * @param userId the user_id of a user
@@ -66,8 +67,10 @@ public class OrderService {
 
         if (newQuantity <= 0) {
             logger.info("Deleting product_id: {} from order having order_id: {} because quantity is 0", productId, orderId);
+            // update on_hand quantity by quantity in order
+            int newOnHandQty =  toInt(order.get().getQuantity()) + toInt(order.get().getProduct().getOnHand());
             // when the newQuantity is 0, delete the item from the order
-            return orderDAO.deleteProductFromOrder(orderId, productId);
+            return orderDAO.deleteProductFromOrder(String.valueOf(newOnHandQty), orderId, productId);
         }
 
         if (toInt(order.get().getProduct().getOnHand()) - toInt(order.get().getQuantity()) + 1 <= 0) {
@@ -102,20 +105,23 @@ public class OrderService {
             return 0;
         }
 
+        // update on_hand quantity by quantity in order
+        int newOnHandQty =  toInt(order.get().getQuantity()) + toInt(order.get().getProduct().getOnHand());
+
         logger.info("Deleting product_id: {} from order having order_id: {}", productId, orderId);
-        return orderDAO.deleteProductFromOrder(orderId, productId);
+        return orderDAO.deleteProductFromOrder(String.valueOf(newOnHandQty), orderId, productId);
     }
 
 
-    /* Delete the orders records matching the order_id
+    /* Delete the orders records and updates the product on_hand quantity
      *
-     * @param orderId the order_id associated to the order
-     * @param productId the product_id of the product
+     * @param orders a list of orders to delete
      * @return 1 to indicate success,  0 to indicate failure
      * */
-    public int deleteOrder(String orderId) {
-        logger.info("Beginning to delete order having order_id: {}", orderId);
-        return orderDAO.deleteByOrderId(orderId);
+    public int deleteOrderUpdateOnHand(List<Order> orders) {
+        logger.info("Beginning to delete order ");
+
+        return orders.size() > 0 ? orderDAO.deleteByOrderIdAndProductId(orders) : 0;
     }
 
 
