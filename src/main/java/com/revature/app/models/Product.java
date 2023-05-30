@@ -14,7 +14,7 @@ public class Product {
     private String id;
     private String name;
     private String price;
-    private int onHand;
+    private String onHand;
     private String departmentId;
 
     public Product(String productId, String productName, String price, String onHand, String departmentsId) {

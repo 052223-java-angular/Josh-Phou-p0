@@ -3,17 +3,24 @@ package com.revature.app.screens;
 import com.revature.app.models.Session;
 import com.revature.app.services.RouterService;
 import lombok.AllArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Scanner;
 import static java.lang.System.out;
 
 @AllArgsConstructor
 public class HomeScreen implements IScreen {
+
+    private static final Logger logger = LogManager.getLogger(HomeScreen.class);
+
     private final RouterService routerService;
     private Session session;
 
     @Override
     public void start(Scanner scanner) {
+        logger.info("Entering home screen");
+
         String input = "";
 
         exit: {

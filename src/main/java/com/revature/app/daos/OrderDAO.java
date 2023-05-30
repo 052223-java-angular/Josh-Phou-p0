@@ -2,19 +2,19 @@ package com.revature.app.daos;
 
 import com.revature.app.models.Order;
 import com.revature.app.models.Product;
-import com.revature.app.services.OrderService;
 import com.revature.app.utils.ConnectionFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class OrderDAO implements ICrudDAO<Order> {
+
+    private static final Logger logger = LogManager.getLogger(OrderDAO.class);
 
     @Override
     public void save(Order order) {
@@ -39,11 +39,12 @@ public class OrderDAO implements ICrudDAO<Order> {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Unable to load JDBC driver", e);
         }
+
     }
+
 
     @Override
     public void update(Order order) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 
@@ -73,75 +74,21 @@ public class OrderDAO implements ICrudDAO<Order> {
 
     /* Deletes an Order record by the tables id
     * */
+
     @Override
-    public void delete(String id) {
-        try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
-            String sql = "DELETE FROM ORDERS WHERE id = ?";
-
-            try (PreparedStatement ps = connection.prepareStatement(sql)) {
-                ps.setString(1, id);
-
-                ps.executeUpdate();
-
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Unable to connect to the database", e);
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot find application.properties", e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Unable to load JDBC driver", e);
-        }
-
+    public List<Order> findAll() {
+        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
     }
 
-    /* Deletes all the records of an order by the order_id
-    * */
-    public void deleteByOrderId(String orderId) {
-        try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
-            String sql = "DELETE FROM ORDERS WHERE order_id = ?";
 
-            try (PreparedStatement ps = connection.prepareStatement(sql)) {
-                ps.setString(1, orderId);
-                ps.executeUpdate();
-
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Unable to connect to the database", e);
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot find application.properties", e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Unable to load JDBC driver", e);
-        }
-
-    }
-
-    /* Delete a product from the orders table that matches the order_id and product_id
-    * */
-    public void deleteProductFromOrder(String orderId, String productId) {
-
-        try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
-            String sql = "DELETE FROM ORDERS WHERE order_id = ? and product_id = ?";
-
-            try (PreparedStatement ps = connection.prepareStatement(sql)) {
-                ps.setString(1, orderId);
-                ps.setString(2, productId);
-
-                ps.executeUpdate();
-
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Unable to connect to the database", e);
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot find application.properties", e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Unable to load JDBC driver", e);
-        }
-    }
-
-    /* Find the order and its associated products by the order_id
-    * */
+    /* Find the order by its id
+     *
+     * @param id the id of the order record
+     * @return an optional containing the order
+     * */
     @Override
     public Optional<Order> findById(String id) {
+        logger.info("Entering into findById(String id)");
 
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
             String sql = "SELECT a.*, b.id as product_id, b.name as product_name, b.price, b.on_hand, b.departments_id " +
@@ -172,14 +119,205 @@ public class OrderDAO implements ICrudDAO<Order> {
         return Optional.empty();
     }
 
-    @Override
-    public List<Order> findAll() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+
+    /* Update the status of the order
+     *
+     * @param status the ordinal string value of the order status
+     * @param orderId the order_id associated to the order
+     * @param productId the product_id of the product
+     * @param remainingOfHand the remaining quantity on hand
+     * */
+    public void updateOrderStatus(String status, String orderId, String productId, String remainingOnHand) {
+        logger.info("Entering into updateOrderStatus(String status, String orderId, String productId, String remainingOnHand)");
+
+        try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
+            // update the status of the order
+            String sql = "UPDATE ORDERS SET STATUS = ? " +
+                    "WHERE order_id = ? " +
+                    "AND product_id = ?";
+
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, status);
+                ps.setString(2, orderId);
+                ps.setString(3, productId);
+
+                ps.executeUpdate();
+            }
+
+            // update on_hand quantity in product
+            sql = "UPDATE PRODUCTS SET ON_HAND = ? WHERE id = ?";
+
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, remainingOnHand);
+                ps.setString(2, productId);
+
+                ps.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to connect to the database", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot find application.properties", e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Unable to load JDBC driver", e);
+        }
     }
 
-    /* Find orders by the users id */
-    public Optional<List<Order>> findOrderByUserId(String userId, OrderService.ORDER_STATUS status) {
+
+    /* Updates the product order quantity matching the order_id and product_id
+     *
+     * @param quantity the product order quantity
+     * @param onHandChangeQty the updated on_hand quantity
+     * @param orderId the order_id associated to the order
+     * @param productId the product_id of the product
+     * @return 1 to indicate success,  0 to indicate failure
+     * */
+    public int updateQuantity(String quantity, String onHandChangeQty, String orderId, String productId) {
+        logger.info("updateQuantity(String quantity, String onHandChangeQty, String orderId, String productId)");
+
+        try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
+            String sql = "UPDATE ORDERS SET QUANTITY = ? WHERE order_id = ? and product_id = ?";
+
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, quantity);
+                ps.setString(2, orderId);
+                ps.setString(3, productId);
+
+                ps.executeUpdate();
+
+            }
+
+            sql = "UPDATE PRODUCTS SET ON_HAND = ? WHERE id = ?";
+
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, onHandChangeQty);
+                ps.setString(2, productId);
+
+                return ps.executeUpdate();
+
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to connect to the database", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot find application.properties", e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Unable to load JDBC driver", e);
+        }
+    }
+
+
+    /* Deletes an Order record by the tables id
+     *
+     * @param id the id of the order record
+     * */
+    @Override
+    public void delete(String id) {
+        logger.info("Entering into delete(String id)");
+
+        try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
+            String sql = "DELETE FROM ORDERS WHERE id = ?";
+
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, id);
+                ps.executeUpdate();
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to connect to the database", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot find application.properties", e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Unable to load JDBC driver", e);
+        }
+
+    }
+
+
+    /* Deletes all the records of an order and updates the product on_hand quantity
+     *
+     * @param orders the order containing the list of products to delete and update
+     * @return the number of deleted rows
+     * */
+    public int deleteByOrderIdAndProductId(List<Order> orders) {
+        logger.info("Entering into deleteByOrderId(String orderId)");
+
+        StringBuilder sb = new StringBuilder();
+        for (Order order : orders) {
+            sb.append("UPDATE PRODUCTS SET on_hand = '")
+                    .append( order.getProduct().getOnHand() + Integer.parseInt(order.getQuantity()) )
+                    .append("' WHERE id = '")
+                    .append(order.getProductId())
+                    .append("'; ");
+            sb.append("DELETE FROM ORDERS WHERE order_id = '")
+                    .append(order.getOrderId())
+                    .append("' AND product_id = '")
+                    .append(order.getProductId())
+                    .append("';");
+        }
+
+        try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
+
+            try (Statement ps = connection.createStatement()) {
+                return ps.executeUpdate(sb.toString());
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to connect to the database", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot find application.properties", e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Unable to load JDBC driver", e);
+        }
+
+    }
+
+
+    /* Delete a product from the order that matches the order_id and product_id
+     *
+     * @param newOnHandQty the updated on_hand quantity for the product being removed from the order
+     * @param orderId the order_id associated to the order
+     * @param productId the product_id of the product
+     * @return 1 to indicate success,  0 to indicate failure
+     * */
+    public int deleteProductFromOrder(String newOnHandQty, String orderId, String productId) {
+        logger.info("Entering into deleteProductFromOrder(String orderId, String productId)");
+
+        try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
+            String sql = "DELETE FROM ORDERS WHERE order_id = ? and product_id = ?; " +
+                    "UPDATE PRODUCTS SET on_hand = ? WHERE id = ?;";
+
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, orderId);
+                ps.setString(2, productId);
+                ps.setString(3, newOnHandQty);
+                ps.setString(4, productId);
+
+                return ps.executeUpdate();
+            }
+
+//            sql = "UPDATE PRODUCTS SET on_hand = ? WHERE id = ?";
+//            try (PreparedStatement ps = connection.prepareStatement())
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to connect to the database", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot find application.properties", e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Unable to load JDBC driver", e);
+        }
+    }
+
+
+    /* Find orders by the users id
+    *
+     * @param userId the id of the user
+     * @param status the ordinal string value of the order status
+     * @return an optional containing a list of products / items in the order
+     * */
+    public Optional<List<Order>> findOrderByUserId(String userId) {
+        logger.info("Entering into findOrderByUserId(String userId) ");
 
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
             String sql = "SELECT a.*, b.id as product_id, b.name as product_name, b.price, b.on_hand, b.departments_id " +
@@ -187,12 +325,11 @@ public class OrderDAO implements ICrudDAO<Order> {
                     "INNER JOIN PRODUCTS AS b " +
                     "ON a.product_id = b.id " +
                     "WHERE user_id = ? " +
-                    "AND status = ? " +
                     "ORDER BY b.name";
 
             try (PreparedStatement ps = connection.prepareStatement(sql)) {
                 ps.setString(1, userId);
-                ps.setString(2, String.valueOf(status.ordinal()));
+//                ps.setString(2, status);
 
                 try (ResultSet rs = ps.executeQuery()) {
                     List<Order> orderItemList = new ArrayList<>();
@@ -217,9 +354,14 @@ public class OrderDAO implements ICrudDAO<Order> {
     }
 
 
-    /* Retrieves an order by the product id
-    * */
-    public Optional<Order> findOrderByProductId(String orderId, String productId) {
+    /* Retrieves a product of an order by the order id and product id
+     *
+     * @param orderId the order_id associated to the order
+     * @param productId the product_id of the product
+     * @return an optional containing the product
+     * */
+    public Optional<Order> findOrderByProductAndOrderId(String orderId, String productId) {
+        logger.info("findOrderByProductAndOrderId(String orderId, String productId)");
 
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
             String sql = "SELECT a.*, b.id as product_id, b.name as product_name, b.price, b.on_hand, b.departments_id " +
@@ -252,13 +394,14 @@ public class OrderDAO implements ICrudDAO<Order> {
         return Optional.empty();
     }
 
-    public Optional<Order> findByUserId (String id) {
+    public Optional<Order> findByUserId (String pId, String user_id) {
         Order order = new Order();
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
-            String sql = "SELECT * FROM orders WHERE user_id = ? AND status = '0'";
+            String sql = "SELECT * FROM orders WHERE product_id = ? AND user_id = ? AND status = '0'";
 
             try (PreparedStatement ps = connection.prepareStatement(sql)) {
-                ps.setString(1, id);
+                ps.setString(1, pId);
+                ps.setString(2, user_id);
 
 
                 try (ResultSet rs = ps.executeQuery()) {
@@ -284,34 +427,9 @@ public class OrderDAO implements ICrudDAO<Order> {
         return Optional.empty();
     }
 
-
-    /*
-     * ------------------------  Helper methods ------------------------
-     */
-
-    /* Sets the fields of the Product and Order instance using the data from the ResultSet*/
-    private Order buildOrderInstance(ResultSet rs) throws SQLException {
-        Product product = new Product(
-                rs.getString("product_id"),
-                rs.getString("product_name"),
-                rs.getString("price"),
-                rs.getString("on_hand"),
-                rs.getString("departments_id")
-        );
-        return new Order(
-                rs.getString("id"),
-                rs.getString("status"),
-                rs.getString("quantity"),
-                rs.getString("user_id"),
-                rs.getString("product_id"),
-                rs.getString("order_id"),
-                product
-        );
-    }
-
     public boolean cartCheck(String pId, String user) {
         try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
-            String sql = "SELECT * FROM orders WHERE user_id = ? AND user_id = ? AND status = '0'";
+            String sql = "SELECT * FROM orders WHERE product_id = ? AND user_id = ? AND status = '0'";
 
             try (PreparedStatement ps = connection.prepareStatement(sql)) {
                 ps.setString(1, pId);
@@ -355,4 +473,36 @@ public class OrderDAO implements ICrudDAO<Order> {
             throw new RuntimeException("Unable to load JDBC driver", e);
         }
     }
+
+    /*
+     * ------------------------  Helper methods ------------------------
+     */
+
+
+    /* Sets the fields of the Product and Order instance using the data from the ResultSet
+    * */
+    private Order buildOrderInstance(ResultSet rs) throws SQLException {
+        logger.info("Entering into buildOrderInstance(ResultSet rs)");
+
+        Product product = new Product(
+                rs.getString("product_id"),
+                rs.getString("product_name"),
+                rs.getString("price"),
+                rs.getString("on_hand"),
+                rs.getString("departments_id")
+        );
+        return new Order(
+                rs.getString("id"),
+                rs.getString("status"),
+                rs.getString("quantity"),
+                rs.getString("user_id"),
+                rs.getString("product_id"),
+                rs.getString("order_id"),
+                product
+        );
+    }
+
+
+
+
 }
