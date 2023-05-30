@@ -14,7 +14,7 @@ import java.util.Optional;
 public class ReviewService {
     private final ReviewDAO reviewDAO;
 
-    public Review findByName(String name) {
+    public List<Review> findByName(String name) {
         return this.reviewDAO.findByProductName(name);
     }
 
@@ -22,8 +22,20 @@ public class ReviewService {
         this.reviewDAO.deleteByName(name, id);
     }
 
-    public String updateReview(Review review, String comment) {
+    public void updateReview(Review review, String comment) {
         this.reviewDAO.updateReview(review, comment);
-        return review.getComment();
+    }
+
+    public Optional<Review> findByUserName(String productName, String userName) {
+        return this.reviewDAO.findByUser(productName, userName);
+    }
+
+    public void createReview(Review review) {
+        this.reviewDAO.save(review);
+    }
+
+    public String getPIdByName (String name) {
+        String productName = this.reviewDAO.getPIdByName(name);
+        return productName;
     }
 }

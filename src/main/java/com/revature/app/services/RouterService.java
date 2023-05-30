@@ -69,8 +69,7 @@ public class RouterService {
         return new OrderService(new OrderDAO());
     }
 
-    private ProductService getProductService() {
-        return new ProductService(new ProductDAO());
-    }
+    private ProductService getProductService() { return new ProductService(new ProductDAO(), new OrderDAO()); }
+
     private ReviewService getReviewService() { return new ReviewService(new ReviewDAO()); }
 }

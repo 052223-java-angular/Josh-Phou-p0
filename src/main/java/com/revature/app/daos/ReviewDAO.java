@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,7 +65,7 @@ public class ReviewDAO implements ICrudDAO<Review> {
         }
     }
 
-    public Review updateReview(Review review, String comment) {
+    public void updateReview(Review review, String comment) {
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
             String sql = "UPDATE reviews INNER JOIN products ON reviews.product_id=products.id SET review = ? WHERE product.name = ? AND user_id = ?";
 
@@ -74,8 +75,6 @@ public class ReviewDAO implements ICrudDAO<Review> {
                 ps.setString(3, "user_id");
 
                 ps.executeUpdate();
-
-                return review;
 
             }
 
@@ -119,24 +118,24 @@ public class ReviewDAO implements ICrudDAO<Review> {
         throw new UnsupportedOperationException("Unimplemented method 'findById'");
     }
 
-    public Review findByProductName (String name) {
+    public List<Review> findByProductName (String name) {
+        List<Review> reviews = new ArrayList<>();
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
-            String sql = "SELECT * FROM reviews INNER JOIN products ON reviews.product_id=products.id WHERE product.name = ?";
+            String sql = "SELECT * FROM reviews INNER JOIN products ON reviews.product_id=products.id WHERE products.name = ?";
 
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 // Set the username parameter for the prepared statement
                 ps.setString(1, name);
 
                 try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
+                    while (rs.next()) {
                         // Create a new User object and populate it with data from the result set
                         Review review = new Review();
                         review.setId(rs.getString("id"));
                         review.setComment(rs.getString("comment"));
                         review.setRating(rs.getInt("rating"));
-                        review.setUserId(rs.getString("user_id"));
                         review.setProductId(rs.getString("product_id"));
-                        return review;
+                        reviews.add(review);
                     }
                 }
             }
@@ -147,12 +146,12 @@ public class ReviewDAO implements ICrudDAO<Review> {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Unable to load JDBC driver", e);
         }
-        return null;
+        return reviews;
     }
 
     public  Optional<Review> findByUser (String name, String id) {
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
-            String sql = "SELECT * FROM reviews INNER JOIN products ON reviews.product_id=products.id WHERE product.name = ? AND user_id = ?";
+            String sql = "SELECT * FROM reviews INNER JOIN products ON reviews.product_id=products.id WHERE products.name = ? AND user_id = ?";
 
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 // Set the username parameter for the prepared statement
@@ -189,4 +188,28 @@ public class ReviewDAO implements ICrudDAO<Review> {
         throw new UnsupportedOperationException("Unimplemented method 'findAll'");
     }
 
+    public String getPIdByName (String name) {
+        String pName = "";
+        try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
+            String sql = "SELECT * FROM reviews INNER JOIN products ON reviews.product_id=products.id WHERE products.name = ? ";
+
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                // Set the username parameter for the prepared statement
+                ps.setString(1, name);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        pName = rs.getString("product_name");
+                    }
+                    return pName;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to connect to the database", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot find application.properties", e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Unable to load JDBC driver", e);
+        }
+    }
 }
