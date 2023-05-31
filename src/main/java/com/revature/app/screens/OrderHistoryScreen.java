@@ -130,7 +130,7 @@ public class OrderHistoryScreen implements IScreen {
                     item.getProduct().getName(),
                     item.getQuantity(),
                     item.getProduct().getPrice(),
-                    toDouble(item.getProduct().getPrice()) * toDouble(item.getQuantity()));
+                    item.getProduct().getPrice() * toDouble(item.getQuantity()));
         });
 
     }
@@ -144,7 +144,7 @@ public class OrderHistoryScreen implements IScreen {
         logger.info("Entering displayOrderTotal(List<Order> orderItems)");
 
         double total = orderItems.stream()
-                .mapToDouble(e -> toDouble(e.getQuantity()) * toDouble(e.getProduct().getPrice()))
+                .mapToDouble(e -> toDouble(e.getQuantity()) * e.getProduct().getPrice())
                 .sum();
 
         out.format("Total spent: $ %s%n", total);

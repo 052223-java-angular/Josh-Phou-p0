@@ -13,7 +13,7 @@ public class Product {
 
     private String id;
     private String name;
-    private String price;
+    private double price;
     private String onHand;
     private String departmentId;
 

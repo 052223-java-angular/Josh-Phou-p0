@@ -22,6 +22,7 @@ public class ProductScreen implements IScreen {
     public void start(Scanner scanner) {
         String input;
         int quantity;
+        String name;
 
         while (true) {
             clearScreen();
@@ -63,17 +64,32 @@ public class ProductScreen implements IScreen {
                     break;
                 case"2":
                     System.out.println("\nEnter a product name: ");
-                    String name = scanner.nextLine();
+                    name = scanner.nextLine();
                     getProductByName(name);
                     System.out.println("\nEnter quantity to add to cart or [x] to go back.");
-                    input = scanner.nextLine();
+                    input = scanner.nextLine().toLowerCase();
+                    if (input == "x") {
+                        break;
+                    }
                     addToCart(name, input);
                     break;
                 case "3":
                     System.out.println("Enter min product price");
-                    input = scanner.nextLine();
+                    double min = Double.parseDouble(scanner.nextLine());
                     System.out.println("Enter max product price");
+                    double max = Double.parseDouble(scanner.nextLine());
+                    List<Product> productList =  getProductByPriceRange(min, max);
+                    if (productList.isEmpty()){
+                        System.out.println("No products found in that range");
+
+                    }
+                    name = selectFromList(productList, scanner);
+                    System.out.println("\nEnter quantity to add to cart or [x] to go back.");
                     input = scanner.nextLine();
+                    if (input == "x" || input == "X") {
+                        break;
+                    }
+                    addToCart(name, input);
                     break;
                 case "x":
                     router.navigate("/storefront", scanner);
@@ -91,8 +107,7 @@ public class ProductScreen implements IScreen {
     /*------------------------------Methods----------------------------------*/
 
     public List<Product> getProducts(String name) {
-        List<Product> items = this.productService.findByCategory(name);
-        return items;
+        return this.productService.findByCategory(name);
     }
 
     public String categoryLoader(Scanner scanner) {
@@ -123,29 +138,28 @@ public class ProductScreen implements IScreen {
     }
 
     public String getIndex(List<Product> items, Scanner scanner) {
-        while (true) {
-            clearScreen();
-            System.out.println("Select a product:\n");
-            for (int i = 0; i < items.size(); i++) {
-                System.out.println("[" + (i + 1) + "] "
-                        + items.get(i).getName() + " for $"
-                        + items.get(i).getPrice() + " On hand: "
-                        + items.get(i).getOnHand());
-            }
-            System.out.println("\nEnter: ");
 
-            while (true) {
-                String input = scanner.nextLine();
-                switch (input.toLowerCase()) {
-                    case "1", "2", "3", "4":
-                        return input;
-                    default:
-                        clearScreen();
-                        System.out.println("Invalid option selected");
-                        System.out.print("Press enter to continue...");
-                        scanner.nextLine();
-                        break;
-                }
+        clearScreen();
+        System.out.println("Select a product:\n");
+        for (int i = 0; i < items.size(); i++) {
+            System.out.println("[" + (i + 1) + "] "
+                    + items.get(i).getName() + " for $"
+                    + items.get(i).getPrice() + " On hand: "
+                    + items.get(i).getOnHand());
+        }
+        System.out.println("\nEnter: ");
+
+        while (true) {
+            String input = scanner.nextLine();
+            switch (input.toLowerCase()) {
+                case "1", "2", "3", "4":
+                    return input;
+                default:
+                    clearScreen();
+                    System.out.println("Invalid option selected");
+                    System.out.print("Press enter to continue...");
+                    scanner.nextLine();
+                    break;
             }
         }
     }
@@ -255,6 +269,24 @@ public class ProductScreen implements IScreen {
         }else {
             System.out.println("Invalid entry");
         }
+    }
+
+    public List<Product> getProductByPriceRange (double min, double max) {
+        return this.productService.findByPriceRange(min, max);
+    }
+
+    public String selectFromList (List<Product> productList, Scanner scanner) {
+        clearScreen();
+        String name;
+        System.out.println("Select a product from the list\n");
+
+        for (int i = 0; i < productList.size(); i++) {
+            System.out.println("[" + (i + 1) +"] " + productList.get(i).getName() + " costs " + productList.get(i).getPrice() + " and there are [" + productList.get(i).getOnHand() + "] currently on hand");
+        }
+        System.out.println("\n Enter: ");
+        int input = scanner.nextInt();
+        name = productList.get(input-1).getName();
+        return name;
     }
 
     /* ------------------------ Helper methods ------------------------------*/
