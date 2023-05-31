@@ -15,7 +15,6 @@ import java.util.Scanner;
 import static com.revature.app.utils.FormatUtil.toDouble;
 import static java.lang.System.out;
 
-// todo merhe
 
 @AllArgsConstructor
 public class OrderHistoryScreen implements IScreen {
@@ -127,7 +126,7 @@ public class OrderHistoryScreen implements IScreen {
         orderItems.stream()
                 .sorted(Comparator.comparing(Order::getOrderId))
                 .forEach(item -> {
-                    out.format("OrderId: %s: \tProduct #: %s \tName: %s \tOrder qty: %s \tPrice \\pc: $ %s \tTotal Cost $ %s%n",
+                    out.format("OrderId: %s: \tProduct #: %s \tName: %s \tOrder qty: %s \tPrice \\pc: $ %.2f \tTotal Cost $ %.2f%n",
                     item.getOrderId(),
                     item.getProduct().getId(),
                     item.getProduct().getName(),
@@ -150,7 +149,7 @@ public class OrderHistoryScreen implements IScreen {
                 .mapToDouble(e -> toDouble(e.getQuantity()) * e.getProduct().getPrice())
                 .sum();
 
-        out.format("Total spent: $ %s%n", total);
+        out.format("Total spent: $ %.2f%n", total);
     }
 
 

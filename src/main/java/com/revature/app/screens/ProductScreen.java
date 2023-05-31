@@ -102,6 +102,7 @@ public class ProductScreen implements IScreen {
                     scanner.nextLine();
                     break;
             }
+            break;
         }
     }
 
@@ -166,8 +167,8 @@ public class ProductScreen implements IScreen {
     }
 
     public String getPId(List<Product> items, String i) {
-           int index = Integer.parseInt(i) - 1 ;
-           return items.get(index).getId();
+        int index = Integer.parseInt(i) - 1 ;
+        return items.get(index).getId();
     }
 
     public int getQuantity (List<Product> items, String input, Scanner scanner) {
@@ -189,7 +190,7 @@ public class ProductScreen implements IScreen {
                     if (quantity <= Integer.parseInt(items.get(num).getOnHand()) && quantity > 0) {
                         return quantity;
                     }
-                        break;
+                    break;
 
                 default:
                     clearScreen();

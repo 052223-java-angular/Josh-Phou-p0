@@ -69,7 +69,7 @@ public class CheckoutScreen implements IScreen {
                 out.println("[2] Remove product");
                 out.println("[3] Delete order");
                 out.println("[4] Checkout");
-                out.println("Press any other key to go back to the store front");
+                out.println("Press enter to go back to the store front");
 
                 logger.info("Prompting for user input on what to do next with order items.");
                 userSelection = scanner.nextLine();
@@ -134,7 +134,7 @@ public class CheckoutScreen implements IScreen {
         String itemToUpdate = scanner.nextLine();
         out.println("[1] Increase +");
         out.println("[2] Decrease -");
-        out.println("Press enter key to go back");
+        out.println("Press enter to go back");
         String quantityOpt = scanner.nextLine();
 
         switch (quantityOpt) {
@@ -147,9 +147,8 @@ public class CheckoutScreen implements IScreen {
                 if (result >= 1) {
                     out.format("%nIncreased product order quantity for %s by 1.%n", orderItems.get(toInt(itemToUpdate) - 1).getProduct().getName());
                 } else {
-                    out.format("Product %s was not found for order %s, unable to increase product qty%n",
-                            orderItems.get(toInt(itemToUpdate) - 1).getOrderId(),
-                            orderItems.get(toInt(itemToUpdate) - 1).getProductId());
+                    out.format("%nUnable to increase quantity; not enough %s on hand%n",
+                            orderItems.get(toInt(itemToUpdate) - 1).getProduct().getName());
                 }
                 break;
             case "2":
@@ -160,10 +159,11 @@ public class CheckoutScreen implements IScreen {
                         orderItems.get(toInt(itemToUpdate) - 1).getProductId());
                 if (result >= 1) {
                     out.format("%nDecreased product order quantity for %s by 1.%n", orderItems.get(toInt(itemToUpdate) - 1).getProduct().getName());
-                } else {
-                    out.format("%nUnable to increase quantity; not enough %s on hand%n",
-                            orderItems.get(toInt(itemToUpdate) - 1).getProduct().getName());
                 }
+//                else {
+//                    out.format("%nUnable to decrease quantity; not enough %s on hand%n",
+//                            orderItems.get(toInt(itemToUpdate) - 1).getProduct().getName());
+//                }
                 break;
             default:
                 clearScreen();
@@ -287,7 +287,7 @@ public class CheckoutScreen implements IScreen {
         orderItems.stream()
                 .sorted(Comparator.comparing(Order::getOrderId))
                 .forEach(item -> {
-                    out.format("Item [%s]: \tOrder #: %s \tProduct #: %s \tName: %s \tOrder qty: %s \tPrice \\pc: $ %s \tTotal Cost $ %s \tOn Hand: %s%n",
+                    out.format("Item [%s]: \tOrder #: %s \tProduct #: %s \tName: %s \tOrder qty: %s \tPrice \\pc: $ %.2f \tTotal Cost $ %.2f \tOn Hand: %s%n",
                     itemNum.getAndIncrement(),
                     item.getOrderId(),
                     item.getProduct().getId(),
@@ -313,7 +313,7 @@ public class CheckoutScreen implements IScreen {
                 .mapToDouble(e -> toDouble(e.getQuantity()) * e.getProduct().getPrice())
                 .sum();
 
-        out.format("Order Total: $ %s%n", total);
+        out.format("Order Total: $ %.2f%n", total);
     }
 
 
