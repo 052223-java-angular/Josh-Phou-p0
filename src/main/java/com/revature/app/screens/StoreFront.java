@@ -61,9 +61,11 @@ public class StoreFront implements IScreen {
                     out.print("Press enter to continue...");
                     scanner.nextLine();
                     continue;
-            }
+
+                }
             break;
         }
+
     }
 
     /* ------------------------ Helper methods ------------------------------*/

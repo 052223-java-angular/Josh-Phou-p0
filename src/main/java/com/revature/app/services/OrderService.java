@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 
+import static com.revature.app.utils.FormatUtil.*;
+
+
 @AllArgsConstructor
 public class OrderService {
     private static final Logger logger = LogManager.getLogger(OrderService.class);
@@ -68,7 +71,9 @@ public class OrderService {
         if (newQuantity <= 0) {
             logger.info("Deleting product_id: {} from order having order_id: {} because quantity is 0", productId, orderId);
             // update on_hand quantity by quantity in order
-            int newOnHandQty = Integer.parseInt(toInt(order.get().getQuantity()) + order.get().getProduct().getOnHand());
+
+            int newOnHandQty =  toInt(order.get().getQuantity()) + toInt(order.get().getProduct().getOnHand());
+
             // when the newQuantity is 0, delete the item from the order
             return orderDAO.deleteProductFromOrder(String.valueOf(newOnHandQty), orderId, productId);
         }
@@ -106,8 +111,8 @@ public class OrderService {
         }
 
         // update on_hand quantity by quantity in order
-        int newOnHandQty = toInt(order.get().getQuantity()) + toInt(order.get().getProduct().getOnHand());
 
+        int newOnHandQty = toInt(order.get().getQuantity()) + toInt(order.get().getProduct().getOnHand());
         logger.info("Deleting product_id: {} from order having order_id: {}", productId, orderId);
         return orderDAO.deleteProductFromOrder(String.valueOf(newOnHandQty), orderId, productId);
     }
@@ -146,14 +151,5 @@ public class OrderService {
         }
     }
 
-
-    /* Convert a String to Integer
-    *
-    * @param value the string to convert
-    * @return an int
-    * */
-    private int toInt(String value) throws NumberFormatException {
-        return Integer.parseInt(value);
-    }
 
 }
