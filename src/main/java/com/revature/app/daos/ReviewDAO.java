@@ -189,8 +189,9 @@ public class ReviewDAO implements ICrudDAO<Review> {
     }
 
     public String getProductId (String productName) {
+        String productId = "";
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
-            String sql = "SELECT * FROM reviews INNER JOIN products ON reviews.product_id=products.id WHERE products.name = ? ";
+            String sql = "SELECT * FROM products  WHERE name = ?";
 
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 // Set the username parameter for the prepared statement
@@ -198,9 +199,9 @@ public class ReviewDAO implements ICrudDAO<Review> {
 
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        productName = rs.getString("id");
+                        productId = rs.getString("id");
                     }
-                    return productName;
+                    return productId;
                 }
             }
         } catch (SQLException e) {

@@ -6,6 +6,7 @@ import com.revature.app.services.ReviewService;
 import com.revature.app.services.RouterService;
 import lombok.AllArgsConstructor;
 
+import java.security.spec.ECField;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -60,9 +61,16 @@ public class ReviewScreen implements IScreen {
                                 break rating;
                             }
                             if (rating >= 1 && rating <= 5) {
+                                scanner.nextLine();
                                 System.out.print("Enter comment: ");
                                 String comment = scanner.nextLine();
-                                createReview(input, rating, comment);
+                                try {
+                                    createReview(input, rating, comment);
+                                }catch(Exception e) {
+                                    System.out.println("You have already reviewed this product");
+                                    System.out.print("Press enter to continue...");
+                                    scanner.nextLine();
+                                }
                             }else {
                                 System.out.println("Invalid entry");
                                 break rating;
@@ -109,7 +117,7 @@ public class ReviewScreen implements IScreen {
     }
 
     public void createReview(String input, int rating, String comment) {
-        String id = createOrderUUID();
+        String id = createUUID();
         String pId = reviewService.getProductId(input);
 
         Review newReview = new Review(id, comment, rating, session.getId(), pId);
@@ -121,12 +129,12 @@ public class ReviewScreen implements IScreen {
         Optional<Review> checkReview = reviewService.findByUserName(productId, session.getUsername());
 
         if( !checkReview.isEmpty()) {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
-    public String createOrderUUID() {
+    public String createUUID() {
         String uuid= String.valueOf(UUID.randomUUID());
         return uuid;
     }

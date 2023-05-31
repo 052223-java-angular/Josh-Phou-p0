@@ -47,7 +47,6 @@ public class ProductScreen implements IScreen {
                     quantity = getQuantity(items, index, scanner);
                     //check if there is a cart fetch/yes create/no
                     Order order = getOrder();
-                    System.out.println(order);
                     //check if item is in cart
                     boolean check = productInCart(pId);
                     //in cart/update quantity not/create entry
