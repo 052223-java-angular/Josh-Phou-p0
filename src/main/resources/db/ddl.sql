@@ -18,7 +18,7 @@ CREATE TABLE departments (
 CREATE TABLE products (
     id VARCHAR PRIMARY KEY,
     name VARCHAR,
-    price VARCHAR,
+    price DECIMAL(12,3),
     on_hand VARCHAR,
     departments_id VARCHAR,
     FOREIGN KEY (departments_id) REFERENCES departments (id)

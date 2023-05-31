@@ -7,10 +7,7 @@ import com.revature.app.services.ProductService;
 import com.revature.app.services.RouterService;
 import lombok.*;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
-import java.util.UUID;
+import java.util.*;
 
 @AllArgsConstructor
 public class ProductScreen implements IScreen {
@@ -68,7 +65,7 @@ public class ProductScreen implements IScreen {
                     getProductByName(name);
                     System.out.println("\nEnter quantity to add to cart or [x] to go back.");
                     input = scanner.nextLine().toLowerCase();
-                    if (input == "x") {
+                    if (input.equals("x")) {
                         break;
                     }
                     addToCart(name, input);
@@ -81,15 +78,19 @@ public class ProductScreen implements IScreen {
                     List<Product> productList =  getProductByPriceRange(min, max);
                     if (productList.isEmpty()){
                         System.out.println("No products found in that range");
-
+                        System.out.println("Press enter to continue");
+                        input = scanner.nextLine();
+                        break;
                     }
                     name = selectFromList(productList, scanner);
                     System.out.println("\nEnter quantity to add to cart or [x] to go back.");
-                    input = scanner.nextLine();
-                    if (input == "x" || input == "X") {
+                    scanner.nextLine();
+                    String input2 = scanner.nextLine();
+
+                    if (Objects.equals(input2, "x")) {
                         break;
                     }
-                    addToCart(name, input);
+                    addToCart(name, input2);
                     break;
                 case "x":
                     router.navigate("/storefront", scanner);
@@ -208,8 +209,7 @@ public class ProductScreen implements IScreen {
             return newOrder;
         }else{
             //unbox optional
-            Order fetchOrder = currentOrder.get();
-            return fetchOrder;
+            return currentOrder.get();
         }
     }
 
@@ -217,15 +217,11 @@ public class ProductScreen implements IScreen {
         boolean check;
         check = this.productService.inCartCheck(pId, session.getId());
 
-        if(check) {
-            return true;
-        }
-        return false;
+        return check;
     }
 
     public String createOrderUUID() {
-        String uuid= String.valueOf(UUID.randomUUID());
-        return uuid;
+        return String.valueOf(UUID.randomUUID());
     }
 
     public void quantityUpdate (String productId, int quantity) {
@@ -283,7 +279,7 @@ public class ProductScreen implements IScreen {
         for (int i = 0; i < productList.size(); i++) {
             System.out.println("[" + (i + 1) +"] " + productList.get(i).getName() + " costs " + productList.get(i).getPrice() + " and there are [" + productList.get(i).getOnHand() + "] currently on hand");
         }
-        System.out.println("\n Enter: ");
+        System.out.print("\nEnter: ");
         int input = scanner.nextInt();
         name = productList.get(input-1).getName();
         return name;
