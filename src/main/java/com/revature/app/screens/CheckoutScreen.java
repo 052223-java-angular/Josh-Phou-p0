@@ -14,6 +14,7 @@ import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.System.out;
+import static com.revature.app.utils.FormatUtil.*;
 
 @AllArgsConstructor
 public class CheckoutScreen implements IScreen {
@@ -313,25 +314,6 @@ public class CheckoutScreen implements IScreen {
                 .sum();
 
         out.format("Order Total: $ %s%n", total);
-    }
-
-
-    /* Converts String value to double
-    * */
-    private Double toDouble(String value) {
-        try {
-            return Double.parseDouble(value);
-        } catch (NumberFormatException e) {
-            out.println(e.getLocalizedMessage());
-        }
-        return 0.00;
-    }
-
-
-    /* Converts String value to int
-    * */
-    private int toInt(String value) throws NumberFormatException {
-        return Integer.parseInt(value);
     }
 
 
