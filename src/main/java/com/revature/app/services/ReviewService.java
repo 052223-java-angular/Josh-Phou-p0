@@ -18,24 +18,15 @@ public class ReviewService {
         return this.reviewDAO.findByProductName(name);
     }
 
-    public void deleteReview(String name, String id) {
-        this.reviewDAO.deleteByName(name, id);
-    }
-
-    public void updateReview(Review review, String comment) {
-        this.reviewDAO.updateReview(review, comment);
-    }
-
-    public Optional<Review> findByUserName(String productName, String userName) {
-        return this.reviewDAO.findByUser(productName, userName);
+    public Optional<Review> findByUserName(String productId, String userName) {
+        return this.reviewDAO.findByUser(productId, userName);
     }
 
     public void createReview(Review review) {
         this.reviewDAO.save(review);
     }
 
-    public String getPIdByName (String name) {
-        String productName = this.reviewDAO.getPIdByName(name);
-        return productName;
+    public String getProductId (String productName) {
+        return this.reviewDAO.getProductId(productName);
     }
 }

@@ -6,6 +6,7 @@ import com.revature.app.services.ReviewService;
 import com.revature.app.services.RouterService;
 import lombok.AllArgsConstructor;
 
+import java.security.spec.ECField;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -60,13 +61,20 @@ public class ReviewScreen implements IScreen {
                                 break rating;
                             }
                             if (rating >= 1 && rating <= 5) {
+                                scanner.nextLine();
                                 System.out.print("Enter comment: ");
                                 String comment = scanner.nextLine();
-                                createReview(input, rating, comment);
+                                try {
+                                    createReview(input, rating, comment);
+                                }catch(Exception e) {
+                                    System.out.println("You have already reviewed this product");
+                                    System.out.print("Press enter to continue...");
+                                    scanner.nextLine();
+                                }
                             }else {
                                 System.out.println("Invalid entry");
                                 break rating;
-                        }
+                            }
                         }else {
                             System.out.println("You have not purchased this product yet.");
                         }
@@ -91,7 +99,7 @@ public class ReviewScreen implements IScreen {
 
         List<Review> reviews = reviewService.findByName(pName);
 
-        System.out.println("\n------------------------------------------");
+        System.out.println("\n=========================================");
         if( reviews == null){
             System.out.println("No reviews for " + pName);
         }
@@ -102,32 +110,38 @@ public class ReviewScreen implements IScreen {
                     + reviews.get(i).getRating()
                     + "\nComment: "
                     + reviews.get(i).getComment());
-            System.out.println("\n");
+            System.out.println("-----------------------");
         }
 
-        System.out.println("\n------------------------------------------");
+        System.out.println("=========================================");
     }
 
     public void createReview(String input, int rating, String comment) {
-        String id = createOrderUUID();
-        String pId = reviewService.getPIdByName(input);
+        String id = createUUID();
+        String pId = reviewService.getProductId(input);
 
         Review newReview = new Review(id, comment, rating, session.getId(), pId);
         reviewService.createReview(newReview);
     }
 
-    public boolean verifyPurchase (String name) {
-        Optional<Review> checkReview = reviewService.findByUserName(name, session.getUsername());
+    public boolean verifyPurchase (String productName) {
+        String productId = getProductId(productName);
+        Optional<Review> checkReview = reviewService.findByUserName(productId, session.getUsername());
 
         if( !checkReview.isEmpty()) {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
-    public String createOrderUUID() {
+    public String createUUID() {
         String uuid= String.valueOf(UUID.randomUUID());
         return uuid;
+    }
+
+    public String getProductId (String productName) {
+        String productId = reviewService.getProductId(productName);
+        return productId;
     }
 
     /* ------------------------ Helper methods ------------------------------*/
