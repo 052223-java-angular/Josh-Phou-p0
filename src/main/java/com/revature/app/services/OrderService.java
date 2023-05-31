@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+import java.util.Scanner;
 
 import static com.revature.app.utils.FormatUtil.*;
 
@@ -89,7 +89,7 @@ public class OrderService {
 
             if (adjCurrentQtyInOrder <= 0) {
                 logger.warn("Deleting product_id: {} from order having order_id: {} because quantity is 0", productId, orderId);
-                orderDAO.deleteProductFromOrder(String.valueOf(adjCurrentOnHand), orderId, productId);
+                orderDAO.deleteProductFromOrder(String.valueOf(adjCurrentQtyInOrder), orderId, productId);
                 return 0;
             }
         }
@@ -98,7 +98,6 @@ public class OrderService {
         return orderDAO.updateQuantity(String.valueOf(adjCurrentQtyInOrder), String.valueOf(adjCurrentOnHand), orderId, productId);
 
     }
-
 
     /* Removes a product from the order
      *

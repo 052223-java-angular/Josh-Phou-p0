@@ -78,6 +78,7 @@ public class CheckoutScreen implements IScreen {
                         logger.info("User selected case 1: begin process of updating product quantity.");
                         clearScreen();
                         updateQuantity(scanner, orderItems);
+                        scanner.nextLine();
                         break;
                     case "2":
                         logger.info("User selected case 2: begin process of removing product from order.");
@@ -170,7 +171,7 @@ public class CheckoutScreen implements IScreen {
                 out.println("Invalid option - press enter key to return to checkout");
                 break;
         }
-
+        // scanner.nextLine();
 
     }
 
@@ -289,9 +290,9 @@ public class CheckoutScreen implements IScreen {
                 .forEach(item -> {
                     out.format("Item [%s]: \tOrder #: %s \tProduct #: %s \tName: %s \tOrder qty: %s \tPrice \\pc: $ %.2f \tTotal Cost $ %.2f \tOn Hand: %s%n",
                     itemNum.getAndIncrement(),
-                    item.getOrderId(),
-                    item.getProduct().getId(),
-                    item.getProduct().getName(),
+                    item.getOrderId().substring(25),
+                    item.getProduct().getId().substring(25),
+                    item.getProduct().getName().length() < 20 ? item.getProduct().getName() : item.getProduct().getName() + " " + addFiller(80 - item.getProduct().getName().length()),
                     item.getQuantity(),
                     item.getProduct().getPrice(),
                     item.getProduct().getPrice() * toDouble(item.getQuantity()),
@@ -299,6 +300,15 @@ public class CheckoutScreen implements IScreen {
         });
 
     }
+
+    private String addFiller(int fillerQty) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < fillerQty; i++) {
+            sb.append(" ");
+        }
+        return sb.toString() + "-> ";
+    }
+
 
 
     /* Sums up the product price and order quantity and displays the value as the order total
