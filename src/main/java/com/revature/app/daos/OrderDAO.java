@@ -438,7 +438,7 @@ public class OrderDAO implements ICrudDAO<Order> {
         Product product = new Product(
                 rs.getString("product_id"),
                 rs.getString("product_name"),
-                rs.getString("price"),
+                rs.getDouble("price"),
                 rs.getString("on_hand"),
                 rs.getString("departments_id")
         );
