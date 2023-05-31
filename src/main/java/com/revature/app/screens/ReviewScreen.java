@@ -28,7 +28,6 @@ public class ReviewScreen implements IScreen {
                 System.out.println("Product Reviews\n");
                 System.out.println("[1] View a product's reviews");
                 System.out.println("[2] Leave a review");
-                //System.out.println("[3] Edit a review");
                 System.out.println("[x] Exit");
 
 
@@ -72,32 +71,6 @@ public class ReviewScreen implements IScreen {
                             System.out.println("You have not purchased this product yet.");
                         }
                         break;
-                    case "3":
-                        rating = 0;
-                        clearScreen();
-                        System.out.print("Type the name of the product review to edit: ");
-                        input = scanner.nextLine();
-                        verify = verifyPurchase(input);
-                        rating:
-                        if(verify) {
-                            System.out.print("Enter updated rating (1-5): ");
-
-                            try {
-                                rating = scanner.nextInt();
-                            } catch (Exception e) {
-                                System.out.println("Invalid entry please enter a rating between 1 and 5");
-                                break rating;
-                            }
-                            if (rating >= 1 && rating <= 5) {
-                                System.out.print("Enter updated comment: ");
-                                String comment = scanner.nextLine();
-                                editReview(input, rating, comment);
-                            }else {
-                                System.out.println("Invalid entry");
-                                break rating;
-                            }
-                        }
-                        break;
                     case "x":
                         routerService.navigate("/storefront", scanner);
                         break;
@@ -135,11 +108,6 @@ public class ReviewScreen implements IScreen {
         System.out.println("\n------------------------------------------");
     }
 
-    public void deleteReview(String name) {
-        String id = session.getId();
-        reviewService.deleteReview(name, id);
-    }
-
     public void createReview(String input, int rating, String comment) {
         String id = createOrderUUID();
         String pId = reviewService.getPIdByName(input);
@@ -155,15 +123,6 @@ public class ReviewScreen implements IScreen {
             return true;
         }
         return false;
-    }
-
-    public void editReview(String name,int rating, String comment) {
-        Optional<Review> oldReview = reviewService.findByUserName(name, session.getUsername());
-
-        if (!oldReview.isEmpty()) {
-            Review updateReview = oldReview.get();
-            reviewService.updateReview(updateReview, comment);
-        }
     }
 
     public String createOrderUUID() {

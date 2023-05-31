@@ -25,26 +25,6 @@ public class ProductDAO implements ICrudDAO<Product> {
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 
-    public void updateOnHand(String name, int i)  {
-        try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
-            String sql = "UPDATE products SET on_hand = ? WHERE name = ?";
-
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                // Set the name parameter for the prepared statement
-                ps.setString(1, name);
-                ps.setInt(2, i);
-
-                ps.execute();
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Unable to connect to the database", e);
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot find application.properties", e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Unable to load JDBC driver", e);
-        }
-    }
-
     @Override
     public void delete(String id) {
         throw new UnsupportedOperationException("Unimplemented method 'delete'");
@@ -72,7 +52,7 @@ public class ProductDAO implements ICrudDAO<Product> {
                         Product product = new Product();
                         product.setId(rs.getString("id"));
                         product.setName(rs.getString("name"));
-                        product.setPrice(rs.getString("price"));
+                        product.setPrice(rs.getDouble("price"));
                         product.setOnHand(rs.getString("on_hand"));
                         product.setDepartmentId(rs.getString("departments_id"));
                         items.add(product);
@@ -96,28 +76,8 @@ public class ProductDAO implements ICrudDAO<Product> {
         throw new UnsupportedOperationException("Unimplemented method 'findAll'");
     }
 
-    public void updateQuantity(String name, int quantity) {
-
-        try (Connection connection = ConnectionFactory.getInstance().getConnection()) {
-            String sql = "UPDATE products SET QUANTITY = ? WHERE name = ?";
-
-            try (PreparedStatement ps = connection.prepareStatement(sql)) {
-                ps.setInt(1, quantity);
-                ps.setString(2, name);
-
-                ps.execute();
-
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Unable to connect to the database", e);
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot find application.properties", e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Unable to load JDBC driver", e);
-        }
-    }
-
-    public String findByName (String name) {
+    public Optional<Product> findByName (String name) {
+        Product product = new Product();
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
             String sql = "SELECT * FROM products WHERE name = ?";
 
@@ -126,8 +86,13 @@ public class ProductDAO implements ICrudDAO<Product> {
                 ps.setString(1,  name);
 
                 try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        return rs.getString("id");
+                    if (rs.next()) {
+                        product.setId(rs.getString("id"));
+                        product.setName(rs.getString("name"));
+                        product.setPrice(rs.getDouble("price"));
+                        product.setOnHand(rs.getString("on_hand"));
+                        product.setDepartmentId(rs.getString("departments_id"));
+                        return Optional.of(product);
                     }
                 }
             }
@@ -139,7 +104,40 @@ public class ProductDAO implements ICrudDAO<Product> {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Unable to load JDBC driver", e);
         }
-        return "";
+        return Optional.empty();
+    }
+
+    public  List<Product> findByPriceRange(double min, double max) {
+        List<Product> productList = new ArrayList<>();
+        try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
+            String sql = "SELECT * FROM products WHERE price >= ? AND price <=? ORDER BY price";
+
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                // Set the name parameter for the prepared statement
+                ps.setDouble(1,  min);
+                ps.setDouble(2,  max);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        Product product = new Product();
+                        product.setId(rs.getString("id"));
+                        product.setName(rs.getString("name"));
+                        product.setPrice(rs.getDouble("price"));
+                        product.setOnHand(rs.getString("on_hand"));
+                        product.setDepartmentId(rs.getString("departments_id"));
+                        productList.add(product);
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to connect to the database", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot find application.properties", e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Unable to load JDBC driver", e);
+        }
+        return productList;
     }
 
 }

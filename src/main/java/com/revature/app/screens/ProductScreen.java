@@ -22,7 +22,7 @@ public class ProductScreen implements IScreen {
     public void start(Scanner scanner) {
         String input;
         int quantity;
-        String pId;
+        String name;
 
         while (true) {
             clearScreen();
@@ -45,33 +45,54 @@ public class ProductScreen implements IScreen {
                     List<Product> items = getProducts(input);
                     //display list and select
                     clearScreen();
-                    input = displayProducts(items, scanner);
-                    pId = getProductId(input);
-                    quantity = getQuantity(items, input, scanner);
+                    String index = getIndex(items, scanner);
+                    String pId = getPId(items, index);
+                    quantity = getQuantity(items, index, scanner);
                     //check if there is a cart fetch/yes create/no
-                    Order order = getOrder(pId);
+                    Order order = getOrder();
                     System.out.println(order);
                     //check if item is in cart
                     boolean check = productInCart(pId);
                     //in cart/update quantity not/create entry
                     if (check) {
-                        quantityUpdate(pId, order.getOrderId(), quantity);
+                        quantityUpdate(pId, quantity);
                     }else {
-                        order.setId(createOrderUUID());
-                        order.setStatus("0");
-                        order.setQuantity(Integer.toString(quantity));
-                        order.setUserId(session.getId());
-                        order.setProductId(pId);
+                        createOrder(order, Integer.toString(quantity), pId);
                         addToOrder(order);
                     }
                     //return to selection screen
-                    continue;
+                    break;
                 case"2":
+                    System.out.println("\nEnter a product name: ");
+                    name = scanner.nextLine();
+                    getProductByName(name);
+                    System.out.println("\nEnter quantity to add to cart or [x] to go back.");
+                    input = scanner.nextLine().toLowerCase();
+                    if (input == "x") {
+                        break;
+                    }
+                    addToCart(name, input);
                     break;
                 case "3":
+                    System.out.println("Enter min product price");
+                    double min = Double.parseDouble(scanner.nextLine());
+                    System.out.println("Enter max product price");
+                    double max = Double.parseDouble(scanner.nextLine());
+                    List<Product> productList =  getProductByPriceRange(min, max);
+                    if (productList.isEmpty()){
+                        System.out.println("No products found in that range");
+
+                    }
+                    name = selectFromList(productList, scanner);
+                    System.out.println("\nEnter quantity to add to cart or [x] to go back.");
+                    input = scanner.nextLine();
+                    if (input == "x" || input == "X") {
+                        break;
+                    }
+                    addToCart(name, input);
                     break;
                 case "x":
-                    router.navigate("/browse", scanner);
+                    router.navigate("/storefront", scanner);
                     break;
                 default:
                     clearScreen();
@@ -80,16 +101,13 @@ public class ProductScreen implements IScreen {
                     scanner.nextLine();
                     break;
             }
-
-            break;
         }
     }
 
     /*------------------------------Methods----------------------------------*/
 
     public List<Product> getProducts(String name) {
-        List<Product> items = this.productService.findByCategory(name);
-        return items;
+        return this.productService.findByCategory(name);
     }
 
     public String categoryLoader(Scanner scanner) {
@@ -119,27 +137,23 @@ public class ProductScreen implements IScreen {
         }
     }
 
-    public String getProductId(String name) {
-        return this.productService.getId(name);
-    }
+    public String getIndex(List<Product> items, Scanner scanner) {
 
-    public String displayProducts(List<Product> items, Scanner scanner) {
+        clearScreen();
+        System.out.println("Select a product:\n");
+        for (int i = 0; i < items.size(); i++) {
+            System.out.println("[" + (i + 1) + "] "
+                    + items.get(i).getName() + " for $"
+                    + items.get(i).getPrice() + " On hand: "
+                    + items.get(i).getOnHand());
+        }
+        System.out.println("\nEnter: ");
+
         while (true) {
-            clearScreen();
-            System.out.println("Select a product:\n");
-            for (int i = 0; i < items.size(); i++) {
-                System.out.println("[" + (i + 1) + "] "
-                        + items.get(i).getName() + " for $"
-                        + items.get(i).getPrice() + " On hand: "
-                        + items.get(i).getOnHand());
-            }
-            System.out.println("\nEnter: ");
-
             String input = scanner.nextLine();
             switch (input.toLowerCase()) {
                 case "1", "2", "3", "4":
-                    int i = Integer.parseInt(input) - 1;
-                    return items.get(i).getId();
+                    return input;
                 default:
                     clearScreen();
                     System.out.println("Invalid option selected");
@@ -150,39 +164,44 @@ public class ProductScreen implements IScreen {
         }
     }
 
+    public String getPId(List<Product> items, String i) {
+           int index = Integer.parseInt(i) - 1 ;
+           return items.get(index).getId();
+    }
+
     public int getQuantity (List<Product> items, String input, Scanner scanner) {
         int quantity = 0;
-        switch (input) {
-            case "1", "2", "3", "4":
-                int num = Integer.parseInt(input) - 1;
-                System.out.println(items.get(num).getName() + " for " + items.get(num).getPrice());
-                System.out.println("\nAmount to purchase: ");
+        while(true) {
+            switch (input) {
+                case "1", "2", "3", "4":
+                    int num = Integer.parseInt(input) - 1;
+                    System.out.println(items.get(num).getName() + " for " + items.get(num).getPrice());
+                    System.out.println("\nAmount to purchase: ");
 
-                try {
-                    quantity = scanner.nextInt();
-                }catch(Exception e) {
+                    try {
+                        quantity = scanner.nextInt();
+                    } catch (Exception e) {
+                        System.out.println("Invalid option selected-----quantity");
+                        System.out.print("Press enter to continue...");
+                        scanner.nextLine();
+                    }
+                    if (quantity <= Integer.parseInt(items.get(num).getOnHand()) && quantity > 0) {
+                        return quantity;
+                    }
+                        break;
+
+                default:
+                    clearScreen();
                     System.out.println("Invalid option selected");
                     System.out.print("Press enter to continue...");
                     scanner.nextLine();
                     break;
-                }
-                if (quantity <= Integer.parseInt(items.get(num).getOnHand()) && quantity > 0) {
-                    return quantity;
-                }else{
-                    break;
-                }
-            default:
-                clearScreen();
-                System.out.println("Invalid option selected");
-                System.out.print("Press enter to continue...");
-                scanner.nextLine();
-                break;
+            }
         }
-        return quantity;
     }
 
-    public Order getOrder(String id) {
-        Optional<Order> currentOrder = productService.retrieveOrder(id, session.getId());
+    public Order getOrder() {
+        Optional<Order> currentOrder = productService.retrieveOrder(session.getId());
         if (currentOrder.isEmpty()) {
             Order newOrder = new Order();
             newOrder.setOrderId(createOrderUUID());
@@ -195,7 +214,9 @@ public class ProductScreen implements IScreen {
     }
 
     public boolean productInCart (String pId) {
-        boolean check = this.productService.inCartCheck(session.getId(), pId);
+        boolean check;
+        check = this.productService.inCartCheck(pId, session.getId());
+
         if(check) {
             return true;
         }
@@ -207,12 +228,65 @@ public class ProductScreen implements IScreen {
         return uuid;
     }
 
-    public void quantityUpdate (String productId, String orderId, int quantity) {
-        productService.updateOnHand(productId,orderId,session.getId(),quantity);
+    public void quantityUpdate (String productId, int quantity) {
+        String quant = String.valueOf(quantity);
+        productService.updateOnHand(productId,session.getId(),quant);
+    }
+
+    public void createOrder(Order order, String quantity, String pId ) {
+        order.setId(createOrderUUID());
+        order.setStatus("0");
+        order.setQuantity(quantity);
+        order.setUserId(session.getId());
+        order.setProductId(pId);
     }
 
     public void addToOrder (Order order) {
         this.productService.addToOrder(order);
+    }
+
+    public void getProductByName(String name) {
+        Optional<Product> search = this.productService.findByName(name);
+        if ( search.isEmpty() ) {
+            System.out.println("Product does not exist in database");
+        }
+        Product product = search.get();
+        System.out.println(product.getName() + " costs " + product.getPrice() + " and there are [" + product.getOnHand() + "] currently on hand");
+    }
+
+    public void addToCart(String name, String quantity) {
+        Optional<Product> getProduct = this.productService.findByName(name);
+        Order order = getOrder();
+        Product product = getProduct.get();
+        if (Integer.parseInt(product.getOnHand())>= Integer.parseInt(quantity) && Integer.parseInt(quantity) > 0) {
+            boolean check = productInCart(product.getId());
+            if (check) {
+                quantityUpdate(product.getId(), Integer.parseInt(quantity));
+            }else {
+                createOrder(order, quantity, product.getId());
+                addToOrder(order);
+            }
+        }else {
+            System.out.println("Invalid entry");
+        }
+    }
+
+    public List<Product> getProductByPriceRange (double min, double max) {
+        return this.productService.findByPriceRange(min, max);
+    }
+
+    public String selectFromList (List<Product> productList, Scanner scanner) {
+        clearScreen();
+        String name;
+        System.out.println("Select a product from the list\n");
+
+        for (int i = 0; i < productList.size(); i++) {
+            System.out.println("[" + (i + 1) +"] " + productList.get(i).getName() + " costs " + productList.get(i).getPrice() + " and there are [" + productList.get(i).getOnHand() + "] currently on hand");
+        }
+        System.out.println("\n Enter: ");
+        int input = scanner.nextInt();
+        name = productList.get(input-1).getName();
+        return name;
     }
 
     /* ------------------------ Helper methods ------------------------------*/
