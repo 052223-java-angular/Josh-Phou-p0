@@ -23,36 +23,34 @@ public class HomeScreen implements IScreen {
 
         String input = "";
 
-        exit: {
-            while (true) {
+        while (true) {
 
-                out.println("\n[1] Register");
-                out.println("[2] Login");
-                out.println("[x] Exit");
+            out.println("\n[1] Register");
+            out.println("[2] Login");
+            out.println("[x] Exit");
 
-                out.print("\nEnter: ");
-                input = scanner.nextLine();
+            out.print("\nEnter: ");
+            input = scanner.nextLine();
 
-                switch (input.toLowerCase()) {
-                    case "1":
-                        routerService.navigate("/register", scanner);
-                        break;
-                    case "2":
-                        routerService.navigate("/login", scanner);
-                        break;
-                    case "x":
-                        out.println("Have a good day!");
-                        break exit;
-                    default:
-                        clearScreen();
-                        out.println("Invalid option");
-                        out.print("\nPress enter to continue...");
-                        scanner.nextLine();
-                        break;
-                }
-
-                break exit;
+            switch (input.toLowerCase()) {
+                case "1":
+                    routerService.navigate("/register", scanner);
+                    break;
+                case "2":
+                    routerService.navigate("/login", scanner);
+                    break;
+                case "x":
+                    out.println("Have a good day!");
+                    System.exit(0);
+                    return;
+                default:
+                    clearScreen();
+                    out.println("Invalid option");
+                    out.print("\nPress enter to continue...");
+                    scanner.nextLine();
+                    break;
             }
+
         }
 
     }

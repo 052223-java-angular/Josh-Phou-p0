@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 
 import static com.revature.app.utils.FormatUtil.toDouble;
 import static java.lang.System.out;
@@ -30,7 +31,7 @@ public class OrderHistoryScreen implements IScreen {
     public void start(Scanner scanner) {
 
         while (true) {
-
+            clearScreen();
             out.println("What would you like to do " + session.getUsername() + "?");
             out.println("[1] View current cart");
             out.println("[2] View completed orders");
@@ -126,15 +127,23 @@ public class OrderHistoryScreen implements IScreen {
         orderItems.stream()
                 .sorted(Comparator.comparing(Order::getOrderId))
                 .forEach(item -> {
-                    out.format("OrderId: %s: \tProduct #: %s \tName: %s \tOrder qty: %s \tPrice \\pc: $ %.2f \tTotal Cost $ %.2f%n",
-                    item.getOrderId(),
-                    item.getProduct().getId(),
-                    item.getProduct().getName(),
+                    out.format("OrderId ...%s \tProduct # ...%s \tName: %s \tOrder qty: %s \tPrice \\pc: $ %.2f \tTotal Cost $ %.2f%n",
+                    item.getOrderId().substring(25),
+                    item.getProduct().getId().substring(25),
+                    item.getProduct().getName().length() < 20 ? item.getProduct().getName() : item.getProduct().getName() + " " + addFiller(80 - item.getProduct().getName().length()),
                     item.getQuantity(),
                     item.getProduct().getPrice(),
                     item.getProduct().getPrice() * toDouble(item.getQuantity()));
         });
 
+    }
+
+    private String addFiller(int fillerQty) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < fillerQty; i++) {
+            sb.append(" ");
+        }
+        return sb.toString() + "-> ";
     }
 
     /* Sums up the product price and order quantity and displays the value as the order total
