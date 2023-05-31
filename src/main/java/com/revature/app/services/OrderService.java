@@ -66,29 +66,36 @@ public class OrderService {
         }
 
         // when order is found, determine whether increase or decrease can happen given current inventory levels
-        int newQuantity = increase ? toInt(order.get().getQuantity()) + 1 : toInt(order.get().getQuantity()) -1;
+        // check on hand qty is greater then
+        int currentOnHand = toInt(order.get().getProduct().getOnHand());
+        int currentQtyInOrder = toInt(order.get().getQuantity());
+        int adjCurrentOnHand = 0;
+        int adjCurrentQtyInOrder = 0;
 
-        if (newQuantity <= 0) {
-            logger.info("Deleting product_id: {} from order having order_id: {} because quantity is 0", productId, orderId);
-            // update on_hand quantity by quantity in order
 
-            int newOnHandQty =  toInt(order.get().getQuantity()) + toInt(order.get().getProduct().getOnHand());
+        if (increase) {
 
-            // when the newQuantity is 0, delete the item from the order
-            return orderDAO.deleteProductFromOrder(String.valueOf(newOnHandQty), orderId, productId);
+            adjCurrentOnHand = currentOnHand - 1;
+            adjCurrentQtyInOrder = currentQtyInOrder + 1;
+            if (adjCurrentOnHand < 0) {
+                logger.warn("Inventory level for product_id: {} is too low, cannot update the order quantity.", productId);
+                return 0;
+            }
+
+        } else {
+
+            adjCurrentOnHand = currentOnHand + 1;
+            adjCurrentQtyInOrder = currentQtyInOrder - 1;
+
+            if (adjCurrentQtyInOrder <= 0) {
+                logger.warn("Deleting product_id: {} from order having order_id: {} because quantity is 0", productId, orderId);
+                orderDAO.deleteProductFromOrder(String.valueOf(adjCurrentOnHand), orderId, productId);
+                return 0;
+            }
         }
-
-        if (toInt(order.get().getProduct().getOnHand()) - toInt(order.get().getQuantity()) + 1 <= 0) {
-            logger.info("Inventory level for product_id: {} is too low, cannot update the order quantity.", productId);
-            return 0;
-        }
-
-        // when all checks pass, update the product on_hand quantity too
-        int onHandChangeQty = newQuantity >  toInt(order.get().getQuantity()) ?
-                toInt(order.get().getProduct().getOnHand()) - 1 : toInt(order.get().getProduct().getOnHand()) + 1;
 
         logger.info("Updating the order quantity for product_id: {} belonging to order_id: {} ", productId, orderId);
-        return orderDAO.updateQuantity(String.valueOf(newQuantity), String.valueOf(onHandChangeQty), orderId, productId);
+        return orderDAO.updateQuantity(String.valueOf(adjCurrentQtyInOrder), String.valueOf(adjCurrentOnHand), orderId, productId);
 
     }
 
