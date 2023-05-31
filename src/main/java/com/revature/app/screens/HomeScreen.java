@@ -41,7 +41,8 @@ public class HomeScreen implements IScreen {
                         routerService.navigate("/login", scanner);
                         break;
                     case "x":
-                        break;
+                        out.println("Have a good day!");
+                        break exit;
                     default:
                         clearScreen();
                         out.println("Invalid option");
