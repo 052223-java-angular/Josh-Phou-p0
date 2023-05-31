@@ -149,14 +149,14 @@ public class ReviewDAO implements ICrudDAO<Review> {
         return reviews;
     }
 
-    public  Optional<Review> findByUser (String name, String id) {
+    public  Optional<Review> findByUser (String productId, String userId) {
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
-            String sql = "SELECT * FROM reviews INNER JOIN products ON reviews.product_id=products.id WHERE products.name = ? AND user_id = ?";
+            String sql = "SELECT * FROM reviews INNER JOIN orders ON reviews.product_id=orders.product_id WHERE orders.product_id = ? AND orders.user_id = ? AND orders.status = '2'";
 
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 // Set the username parameter for the prepared statement
-                ps.setString(1, name);
-                ps.setString(2, id);
+                ps.setString(1, productId);
+                ps.setString(2, userId);
 
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
@@ -188,20 +188,19 @@ public class ReviewDAO implements ICrudDAO<Review> {
         throw new UnsupportedOperationException("Unimplemented method 'findAll'");
     }
 
-    public String getPIdByName (String name) {
-        String pName = "";
+    public String getProductId (String productName) {
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
             String sql = "SELECT * FROM reviews INNER JOIN products ON reviews.product_id=products.id WHERE products.name = ? ";
 
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 // Set the username parameter for the prepared statement
-                ps.setString(1, name);
+                ps.setString(1, productName);
 
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        pName = rs.getString("product_name");
+                        productName = rs.getString("id");
                     }
-                    return pName;
+                    return productName;
                 }
             }
         } catch (SQLException e) {
@@ -212,4 +211,5 @@ public class ReviewDAO implements ICrudDAO<Review> {
             throw new RuntimeException("Unable to load JDBC driver", e);
         }
     }
+
 }
