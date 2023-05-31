@@ -45,6 +45,7 @@ public class ProductScreen implements IScreen {
                     String index = getIndex(items, scanner);
                     String pId = getPId(items, index);
                     quantity = getQuantity(items, index, scanner);
+                    scanner.nextLine();
                     //check if there is a cart fetch/yes create/no
                     Order order = getOrder();
                     //check if item is in cart
@@ -111,22 +112,22 @@ public class ProductScreen implements IScreen {
     }
 
     public String categoryLoader(Scanner scanner) {
-        System.out.println("\n[1] Product CategoryA");
-        System.out.println("[2] Product CategoryB");
-        System.out.println("[3] Product CategoryC");
-        System.out.println("[4] Product CategoryD");
+        System.out.println("\n[1] Outfront House of Steak");
+        System.out.println("[2] We Do Not Sell Pizza");
+        System.out.println("[3] McDurnguls");
+        System.out.println("[4] Oops! All Meatballs");
 
         System.out.print("\nEnter: ");
         while(true) {
             switch (scanner.nextLine().toLowerCase()) {
                 case "1":
-                    return "CategoryA";
+                    return "Outfront House of Steak";
                 case "2":
-                    return "CategoryB";
+                    return "We Do Not Sell Pizza";
                 case "3":
-                    return "CategoryC";
+                    return "McDurnguls";
                 case "4":
-                    return "CategoryD";
+                    return "Oops! All Meatballs";
                 default:
                     clearScreen();
                     System.out.println("Invalid option selected");

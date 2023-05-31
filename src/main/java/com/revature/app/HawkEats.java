@@ -9,12 +9,12 @@ import org.apache.logging.log4j.Logger;
 
 import static java.lang.System.out;
 
-public class App {
-  private static final Logger logger = LogManager.getLogger(App.class);
+public class HawkEats {
+  private static final Logger logger = LogManager.getLogger(HawkEats.class);
 
   public static void main(String args[]) {
     logger.info("------------------ START APPLICATION -----------------------------");
-    out.println("Welcome to eCommerce App!");
+    out.println("Welcome to Hawk Eats!");
 
     Scanner scan = new Scanner(System.in);
     RouterService router = new RouterService(new Session());

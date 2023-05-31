@@ -22,6 +22,7 @@ public class StoreFront implements IScreen {
     public void start(Scanner scanner) {
         String input = "";
 
+        exit:
         while (true) {
             clearScreen();
             out.println("Welcome to the -Company name- eStore " + session.getUsername() + "!");
@@ -29,7 +30,7 @@ public class StoreFront implements IScreen {
             out.println("[2] View cart / orders");
             out.println("[3] Checkout");
             out.println("[4] Leave a product review");
-            out.println("[x] Press x to logout and return to the login / register screen");
+            out.println("[x] Return to the login/register screen");
             out.println("[q] Logout and exit");
 
 
@@ -54,7 +55,8 @@ public class StoreFront implements IScreen {
                     router.navigate("/home", scanner);
                     break;
                 case "q":
-                    break ;
+                    out.println("Have a good day!");
+                    break exit;
                 default:
                     clearScreen();
                     out.println("Invalid option selected");

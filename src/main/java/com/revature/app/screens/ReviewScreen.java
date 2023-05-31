@@ -99,7 +99,7 @@ public class ReviewScreen implements IScreen {
 
         List<Review> reviews = reviewService.findByName(pName);
 
-        System.out.println("\n------------------------------------------");
+        System.out.println("\n=========================================");
         if( reviews == null){
             System.out.println("No reviews for " + pName);
         }
@@ -110,10 +110,10 @@ public class ReviewScreen implements IScreen {
                     + reviews.get(i).getRating()
                     + "\nComment: "
                     + reviews.get(i).getComment());
-            System.out.println("\n");
+            System.out.println("-----------------------");
         }
 
-        System.out.println("\n------------------------------------------");
+        System.out.println("=========================================");
     }
 
     public void createReview(String input, int rating, String comment) {
