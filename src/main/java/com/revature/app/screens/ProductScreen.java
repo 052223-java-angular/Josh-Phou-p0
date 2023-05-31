@@ -57,7 +57,7 @@ public class ProductScreen implements IScreen {
                         createOrder(order, Integer.toString(quantity), pId);
                         addToOrder(order);
                     }
-                    //return to selection screen
+                    //return to selection screen  k
                     break;
                 case"2":
                     System.out.println("\nEnter a product name: ");
